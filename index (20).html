@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUB &mdash; AI in Education: Literacy &amp; Applications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  /* ============================================================
+     AUB Brand Palette (mirrors aub.edu.lb / lms.aub.edu.lb)
+     ============================================================ */
+  :root {
+    --aub-maroon:        #7A003C;
+    --aub-maroon-deep:   #5C002D;
+    --aub-maroon-light:  #9A1A56;
+    --aub-cream:         #F4EFE6;
+    --aub-stone:         #EDE3D2;
+    --aub-cedar:         #3B6B47;
+    --aub-gold:          #C8A951;
+    --aub-gold-soft:     #D9BE73;
+    --aub-charcoal:      #1C1A19;
+    --aub-graphite:      #2A2826;
+    --aub-slate:         #3D3A37;
+    --aub-mist:          #8B847C;
+    --aub-paper:         #FBF8F2;
+    --aub-line:          #3A3633;
+    --aub-success:       #5C8A5E;
+    --aub-warn:          #C8853B;
+    --aub-danger:        #B8453A;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--aub-charcoal);
+    color: var(--aub-cream);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.65;
+    background-image:
+      radial-gradient(circle at 15% 5%, rgba(122, 0, 60, 0.10) 0%, transparent 35%),
+      radial-gradient(circle at 90% 95%, rgba(200, 169, 81, 0.06) 0%, transparent 40%);
+    background-attachment: fixed;
+  }
+
+  /* =========== PROGRAM HEADER =========== */
+  .program-header {
+    padding: 4rem 2rem 2rem;
+    text-align: center;
+    background:
+      linear-gradient(180deg, rgba(92, 0, 45, 0.20) 0%, rgba(28, 26, 25, 0) 100%),
+      var(--aub-charcoal);
+    border-bottom: 3px double var(--aub-maroon);
+    position: relative;
+  }
+  .program-header::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--aub-maroon) 0%, var(--aub-gold) 50%, var(--aub-maroon) 100%);
+  }
+  .crest {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--aub-maroon);
+    border: 2px solid var(--aub-gold);
+    color: var(--aub-cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700; font-size: 1.6rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 18px rgba(122, 0, 60, 0.4), inset 0 0 0 4px rgba(244, 239, 230, 0.05);
+    letter-spacing: 0.05em;
+  }
+  .program-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--aub-cream);
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.01em;
+  }
+  .program-header h1 .accent { color: var(--aub-gold); font-style: italic; }
+  .program-header .subtitle {
+    font-size: 0.92rem;
+    color: var(--aub-stone);
+    font-weight: 300;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .program-header .institution {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    color: var(--aub-gold-soft);
+    margin-bottom: 1.4rem;
+    font-style: italic;
+  }
+  .badge-row { display: flex; justify-content: center; gap: 0.6rem; flex-wrap: wrap; }
+  .badge-row .badge {
+    display: inline-block;
+    padding: 0.32rem 0.95rem;
+    border: 1px solid var(--aub-maroon);
+    background: rgba(122, 0, 60, 0.12);
+    color: var(--aub-cream);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .badge-row .badge.gold {
+    border-color: var(--aub-gold);
+    color: var(--aub-gold);
+    background: rgba(200, 169, 81, 0.08);
+  }
+
+  /* =========== TOPIC TABS =========== */
+  .topic-tabs {
+    display: flex;
+    overflow-x: auto;
+    background: var(--aub-graphite);
+    border-bottom: 2px solid var(--aub-maroon);
+    padding: 0 1rem;
+    gap: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--aub-maroon) transparent;
+  }
+  .topic-tabs::-webkit-scrollbar { height: 4px; }
+  .topic-tabs::-webkit-scrollbar-thumb { background: var(--aub-maroon); }
+  .topic-tab {
+    flex-shrink: 0;
+    padding: 0.9rem 1.1rem;
+    color: var(--aub-stone);
+    font-size: 0.76rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    user-select: none;
+    letter-spacing: 0.04em;
+    background: none; border-top: none; border-left: none; border-right: none;
+    font-family: 'Inter', sans-serif;
+  }
+  .topic-tab:hover { color: var(--aub-cream); background: rgba(122, 0, 60, 0.15); }
+  .topic-tab.active { color: var(--aub-gold); border-bottom-color: var(--aub-gold); }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .status-dot.complete { background: var(--aub-success); }
+  .status-dot.in-progress { background: var(--aub-gold); }
+  .status-dot.upcoming { background: var(--aub-mist); opacity: 0.45; }
+
+  /* =========== TOPIC PANELS =========== */
+  .topic-panel { display: none; }
+  .topic-panel.active { display: block; }
+
+  /* =========== SUB-TABS =========== */
+  .sub-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--aub-line);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    background: var(--aub-charcoal);
+  }
+  .sub-tab {
+    padding: 0.85rem 1.3rem;
+    color: var(--aub-mist);
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    user-select: none;
+    background: none; border-top: none; border-left: none; border-right: none;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .sub-tab:hover { color: var(--aub-cream); }
+  .sub-tab.active { color: var(--aub-gold); border-bottom-color: var(--aub-gold); }
+  .sub-panel { display: none; }
+  .sub-panel.active { display: block; }
+
+  /* =========== CONTENT CONTAINERS =========== */
+  .topic-overview-container { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem; }
+  .topic-overview-container h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--aub-cream);
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--aub-line);
+  }
+  .topic-overview-container h2 .num { color: var(--aub-gold); font-style: italic; }
+  .topic-overview-desc {
+    color: var(--aub-stone);
+    margin-bottom: 2rem;
+    font-size: 0.98rem;
+    max-width: 760px;
+  }
+
+  /* =========== SESSION / LECTURE CARDS =========== */
+  .session-card {
+    background:
+      linear-gradient(135deg, rgba(122, 0, 60, 0.08) 0%, transparent 60%),
+      var(--aub-graphite);
+    border: 1px solid var(--aub-line);
+    border-left: 3px solid var(--aub-maroon);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .session-card:hover { border-left-color: var(--aub-gold); transform: translateX(3px); }
+  .session-card .session-num {
+    display: inline-block;
+    padding: 0.28rem 0.9rem;
+    background: var(--aub-maroon);
+    color: var(--aub-cream);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .session-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--aub-cream);
+    margin-bottom: 0.35rem;
+  }
+  .session-card .session-meta {
+    font-size: 0.8rem;
+    color: var(--aub-mist);
+    margin-bottom: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .session-card ul { list-style: none; padding: 0; }
+  .session-card ul li {
+    padding: 0.32rem 0;
+    color: var(--aub-stone);
+    font-size: 0.92rem;
+    padding-left: 1.4rem;
+    position: relative;
+  }
+  .session-card ul li::before {
+    content: "\2756";
+    color: var(--aub-gold);
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    font-size: 0.65rem;
+  }
+
+  /* =========== LMS-STYLE RESOURCE LIST =========== */
+  .lms-block {
+    background: var(--aub-paper);
+    border: 1px solid var(--aub-line);
+    margin-bottom: 1.5rem;
+    color: var(--aub-charcoal);
+  }
+  .lms-block-header {
+    background: var(--aub-maroon-deep);
+    color: var(--aub-cream);
+    padding: 0.85rem 1.4rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    border-left: 4px solid var(--aub-gold);
+    letter-spacing: 0.02em;
+  }
+  .lms-resources { list-style: none; padding: 0.5rem 0; }
+  .lms-resources li {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.6rem 1.4rem;
+    border-bottom: 1px solid rgba(58, 54, 51, 0.10);
+    color: var(--aub-charcoal);
+    font-size: 0.92rem;
+  }
+  .lms-resources li:last-child { border-bottom: none; }
+  .lms-resources li:hover { background: rgba(122, 0, 60, 0.04); }
+  .lms-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px; height: 26px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .lms-icon.pdf { background: #B8453A; }
+  .lms-icon.ppt { background: #C8853B; }
+  .lms-icon.url { background: #3B6B47; }
+  .lms-icon.rec { background: var(--aub-maroon); }
+  .lms-icon.assign { background: var(--aub-gold); color: var(--aub-charcoal); }
+
+  /* =========== ASSIGNMENT NAV =========== */
+  .mini-project-nav {
+    position: sticky; top: 0; width: 100%;
+    background: rgba(28, 26, 25, 0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--aub-maroon);
+    z-index: 90;
+    padding: 0 2rem;
+  }
+  .mini-project-nav ul {
+    display: flex; list-style: none; max-width: 1200px;
+    margin: 0 auto; gap: 0; overflow-x: auto;
+  }
+  .mini-project-nav a {
+    display: block;
+    padding: 0.85rem 1.1rem;
+    color: var(--aub-stone);
+    text-decoration: none;
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s, border-color 0.2s;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  .mini-project-nav a:hover {
+    color: var(--aub-gold);
+    border-bottom-color: var(--aub-gold);
+  }
+
+  /* =========== HERO (assignment) =========== */
+  .hero {
+    padding: 5rem 2rem 3rem;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(122, 0, 60, 0.12) 0%, transparent 100%);
+    border-bottom: 1px solid var(--aub-line);
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--aub-cream);
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 .accent { color: var(--aub-gold); font-style: italic; }
+  .hero p {
+    font-size: 1rem;
+    color: var(--aub-stone);
+    margin-bottom: 1rem;
+  }
+  .hero .badge {
+    display: inline-block;
+    padding: 0.4rem 1.1rem;
+    border: 1px solid var(--aub-gold);
+    background: rgba(200, 169, 81, 0.08);
+    color: var(--aub-gold);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+  }
+
+  section { max-width: 1200px; margin: 0 auto; padding: 3.5rem 2rem; }
+  section h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.85rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--aub-cream);
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--aub-line);
+  }
+  section h2 .num { color: var(--aub-gold); font-style: italic; font-size: 1.4rem; }
+  .section-desc {
+    color: var(--aub-stone);
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+    max-width: 800px;
+  }
+
+  /* =========== PARTS GRID =========== */
+  .parts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .part-card {
+    background: var(--aub-graphite);
+    border: 1px solid var(--aub-line);
+    border-top: 3px solid var(--aub-cedar);
+    padding: 1.8rem;
+    transition: border-top-color 0.3s, transform 0.3s;
+  }
+  .part-card:hover { border-top-color: var(--aub-gold); transform: translateY(-3px); }
+  .part-card .part-num {
+    display: inline-block;
+    padding: 0.28rem 0.85rem;
+    background: var(--aub-cedar);
+    color: var(--aub-cream);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.85rem;
+  }
+  .part-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--aub-cream);
+    margin-bottom: 0.85rem;
+  }
+  .part-card ul { list-style: none; padding: 0; }
+  .part-card ul li {
+    padding: 0.28rem 0;
+    color: var(--aub-stone);
+    font-size: 0.86rem;
+    padding-left: 1.2rem;
+    position: relative;
+  }
+  .part-card ul li::before { content: "\2192"; color: var(--aub-gold); position: absolute; left: 0; }
+
+  /* =========== DELIVERABLES =========== */
+  .deliverables-section { padding: 2rem 0; }
+  .deliverables-section h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--aub-cream);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--aub-line);
+  }
+  .deliverables-section h2 .num { color: var(--aub-gold); font-style: italic; }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    background: var(--aub-graphite);
+    border: 1px solid var(--aub-line);
+    border-left: 2px solid var(--aub-cedar);
+    padding: 0.85rem 1.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--aub-stone);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .checklist li .check-icon { color: var(--aub-success); font-weight: 700; flex-shrink: 0; font-size: 1rem; }
+
+  /* =========== TABLES =========== */
+  .audit-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    background: var(--aub-graphite);
+    border: 1px solid var(--aub-line);
+  }
+  .audit-table th {
+    background: var(--aub-maroon-deep);
+    color: var(--aub-cream);
+    text-align: left;
+    padding: 0.85rem 1rem;
+    border-bottom: 2px solid var(--aub-gold);
+    font-weight: 600;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .audit-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--aub-line);
+    vertical-align: top;
+    color: var(--aub-stone);
+  }
+  .audit-table tr:hover { background: rgba(122, 0, 60, 0.06); }
+  .audit-table code {
+    background: var(--aub-charcoal);
+    padding: 2px 6px;
+    font-size: 0.82rem;
+    color: var(--aub-gold-soft);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .status-badge {
+    padding: 3px 10px;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .st-design { background: rgba(59, 107, 71, 0.25); color: var(--aub-cedar); }
+  .st-fixed { background: rgba(92, 138, 94, 0.25); color: var(--aub-success); }
+  .st-risk { background: rgba(200, 133, 59, 0.25); color: var(--aub-warn); }
+  .st-info { background: rgba(200, 169, 81, 0.20); color: var(--aub-gold); }
+
+  /* =========== MERMAID =========== */
+  .mermaid-container {
+    background: var(--aub-graphite);
+    border: 1px solid var(--aub-line);
+    border-left: 3px solid var(--aub-maroon);
+    padding: 2rem;
+    overflow-x: auto;
+    margin-bottom: 2rem;
+  }
+  .mermaid { display: flex; justify-content: center; }
+
+  /* =========== COMING SOON =========== */
+  .coming-soon {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 5rem 2rem; text-align: center;
+  }
+  .coming-soon-icon {
+    width: 80px; height: 80px;
+    border: 1px solid var(--aub-maroon);
+    background: var(--aub-graphite);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: var(--aub-gold);
+    font-style: italic;
+  }
+  .coming-soon h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--aub-stone);
+    margin-bottom: 0.5rem;
+  }
+  .coming-soon p { color: var(--aub-mist); font-size: 0.95rem; max-width: 460px; }
+
+  /* =========== REPO LINK =========== */
+  .repo-link-section { padding: 1rem 0 3rem; text-align: center; }
+  .repo-link-section a {
+    display: inline-block;
+    padding: 0.8rem 2.2rem;
+    background: var(--aub-maroon);
+    border: 1px solid var(--aub-gold);
+    color: var(--aub-cream);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    transition: background 0.3s, color 0.3s;
+  }
+  .repo-link-section a:hover {
+    background: var(--aub-gold);
+    color: var(--aub-charcoal);
+  }
+
+  /* =========== REPORT BLOCK =========== */
+  .report-block {
+    background: var(--aub-graphite);
+    border: 1px solid var(--aub-line);
+    border-left: 3px solid var(--aub-gold);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .report-block h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    color: var(--aub-cream);
+    margin-bottom: 0.85rem;
+    font-weight: 600;
+  }
+  .report-block p { color: var(--aub-stone); margin-bottom: 0.85rem; font-size: 0.94rem; }
+  .report-block .prompt-box {
+    background: var(--aub-charcoal);
+    border: 1px dashed var(--aub-mist);
+    padding: 1rem 1.2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--aub-gold-soft);
+    margin-top: 0.85rem;
+    white-space: pre-wrap;
+    line-height: 1.55;
+    overflow-x: auto;
+  }
+
+  /* =========== STATS GRID =========== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .stat-card {
+    background: var(--aub-graphite);
+    border: 1px solid var(--aub-line);
+    border-bottom: 2px solid var(--aub-maroon);
+    padding: 1.2rem;
+    text-align: center;
+  }
+  .stat-card .stat-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--aub-gold);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .stat-card .stat-label {
+    font-size: 0.7rem;
+    color: var(--aub-stone);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* =========== CHART =========== */
+  .chart-container {
+    background: var(--aub-paper);
+    border: 1px solid var(--aub-line);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    color: var(--aub-charcoal);
+  }
+  .chart-container h4 {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--aub-maroon);
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 600;
+  }
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 280px;
+    gap: 0.5rem;
+    border-left: 2px solid var(--aub-charcoal);
+    border-bottom: 2px solid var(--aub-charcoal);
+    padding: 1rem 0.5rem 0;
+    position: relative;
+  }
+  .bar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    height: 100%;
+    justify-content: flex-end;
+  }
+  .bar-stack { display: flex; align-items: flex-end; gap: 2px; height: 100%; }
+  .bar { width: 14px; transition: opacity 0.3s; }
+  .bar:hover { opacity: 0.7; }
+  .bar.q1 { background: var(--aub-maroon); }
+  .bar.q2 { background: var(--aub-cedar); }
+  .bar.q3 { background: var(--aub-gold); }
+  .bar.q4 { background: var(--aub-warn); }
+  .bar-label {
+    margin-top: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--aub-charcoal);
+  }
+  .chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--aub-charcoal);
+  }
+  .legend-swatch { width: 14px; height: 14px; }
+
+  /* =========== LECTURE 1 CONCEPT MAP =========== */
+  .concept-map {
+    background: var(--aub-paper);
+    border: 1px solid var(--aub-line);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .concept-map h4 {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--aub-maroon);
+    font-size: 1.15rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  /* =========== FOOTER =========== */
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    border-top: 3px double var(--aub-maroon);
+    color: var(--aub-mist);
+    font-size: 0.85rem;
+    background: var(--aub-graphite);
+    margin-top: 2rem;
+  }
+  footer .seal {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--aub-gold);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  footer a { color: var(--aub-gold); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* =========== PROSE =========== */
+  .prose { color: var(--aub-stone); font-size: 0.95rem; line-height: 1.7; }
+  .prose p { margin-bottom: 1rem; }
+  .prose strong { color: var(--aub-cream); font-weight: 600; }
+  .prose em { color: var(--aub-gold-soft); font-style: italic; }
+
+  @media (max-width: 700px) {
+    .program-header h1 { font-size: 2rem; }
+    .hero h1 { font-size: 1.7rem; }
+    .parts-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== PROGRAM HEADER ===== -->
+<div class="program-header">
+  <div class="crest">AUB</div>
+  <p class="subtitle">American University of Beirut &middot; Faculty of Arts &amp; Sciences</p>
+  <h1>AI in Education <span class="accent">&mdash;</span> Literacy &amp; Applications</h1>
+  <p class="institution">"That they may have life, and have it more abundantly"</p>
+  <div class="badge-row">
+    <span class="badge gold">15 Topics</span>
+    <span class="badge">Generative AI</span>
+    <span class="badge">Pedagogy</span>
+    <span class="badge">Hands-On</span>
+    <span class="badge">AUB LMS &middot; Course #32480</span>
+  </div>
+</div>
+
+<!-- ===== TOPIC TABS ===== -->
+<div class="topic-tabs" role="tablist">
+  <button class="topic-tab active" data-topic="1" role="tab"><span class="status-dot complete"></span>T 01 &middot; Syllabus &amp; References</button>
+  <button class="topic-tab" data-topic="2" role="tab"><span class="status-dot complete"></span>T 02 &middot; Introduction</button>
+  <button class="topic-tab" data-topic="3" role="tab"><span class="status-dot in-progress"></span>T 03 &middot; GenAI in Education</button>
+  <button class="topic-tab" data-topic="4" role="tab"><span class="status-dot upcoming"></span>T 04</button>
+  <button class="topic-tab" data-topic="5" role="tab"><span class="status-dot upcoming"></span>T 05</button>
+  <button class="topic-tab" data-topic="6" role="tab"><span class="status-dot upcoming"></span>T 06</button>
+  <button class="topic-tab" data-topic="7" role="tab"><span class="status-dot upcoming"></span>T 07</button>
+  <button class="topic-tab" data-topic="8" role="tab"><span class="status-dot upcoming"></span>T 08</button>
+  <button class="topic-tab" data-topic="9" role="tab"><span class="status-dot upcoming"></span>T 09</button>
+  <button class="topic-tab" data-topic="10" role="tab"><span class="status-dot upcoming"></span>T 10</button>
+  <button class="topic-tab" data-topic="11" role="tab"><span class="status-dot upcoming"></span>T 11</button>
+  <button class="topic-tab" data-topic="12" role="tab"><span class="status-dot upcoming"></span>T 12</button>
+  <button class="topic-tab" data-topic="13" role="tab"><span class="status-dot upcoming"></span>T 13</button>
+  <button class="topic-tab" data-topic="14" role="tab"><span class="status-dot upcoming"></span>T 14</button>
+  <button class="topic-tab" data-topic="15" role="tab"><span class="status-dot upcoming"></span>T 15</button>
+</div>
+
+<!-- ================================================================ -->
+<!-- TOPIC 1 -->
+<!-- ================================================================ -->
+<div class="topic-panel active" data-topic-panel="1">
+  <div class="sub-tabs">
+    <button class="sub-tab active" data-subtab="t1-overview">Overview</button>
+    <button class="sub-tab" data-subtab="t1-resources">Resources</button>
+    <button class="sub-tab" data-subtab="t1-references">Reading List</button>
+  </div>
+
+  <div class="sub-panel active" data-subpanel="t1-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 01</span> &mdash; Syllabus &amp; References</h2>
+      <p class="topic-overview-desc">Course orientation, learning outcomes, and the foundational reading list anchoring the rest of the program. All materials live in the AUB LMS course portal and the corresponding OneDrive folder.</p>
+
+      <div class="session-card">
+        <div class="session-num">Session 01</div>
+        <h3>Course Orientation</h3>
+        <p class="session-meta">Week 01 &middot; AUB Campus / Hybrid</p>
+        <ul>
+          <li>Course objectives, weekly cadence, assessment structure</li>
+          <li>Expectations around AI tool use and academic integrity</li>
+          <li>Tool setup: ChatGPT / Claude / Gemini account orientation</li>
+          <li>AUB LMS course portal walkthrough</li>
+        </ul>
+      </div>
+
+      <div class="session-card">
+        <div class="session-num">Session 02</div>
+        <h3>Foundational Reading &amp; References</h3>
+        <p class="session-meta">Week 01 &middot; Reading + Discussion</p>
+        <ul>
+          <li>AI Adoption in the Education System</li>
+          <li>AI and the Future of Teaching and Learning</li>
+          <li>Impact of AI &mdash; Artificial Intelligence: The Impact of AI on Education</li>
+          <li>Guide to AI in Schools</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-panel" data-subpanel="t1-resources">
+    <div class="topic-overview-container">
+      <h2><span class="num">Resources</span> &mdash; LMS &amp; OneDrive Materials</h2>
+      <p class="topic-overview-desc">Files mirrored from the AUB LMS course view and the Topic 1 OneDrive folder.</p>
+
+      <div class="lms-block">
+        <div class="lms-block-header">Syllabus and References</div>
+        <ul class="lms-resources">
+          <li><span class="lms-icon pdf">PDF</span>Course Syllabus</li>
+          <li><span class="lms-icon pdf">PDF</span>AI Adoption in the Education System</li>
+          <li><span class="lms-icon pdf">PDF</span>AI and the Future of Teaching and Learning</li>
+          <li><span class="lms-icon pdf">PDF</span>Impact of AI</li>
+          <li><span class="lms-icon pdf">PDF</span>Artificial Intelligence: The Impact of AI on Education</li>
+          <li><span class="lms-icon pdf">PDF</span>Guide to AI in Schools</li>
+          <li><span class="lms-icon url">URL</span>Meeting Link (live class)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-panel" data-subpanel="t1-references">
+    <div class="topic-overview-container">
+      <h2><span class="num">Reading List</span> &mdash; Course References</h2>
+      <p class="topic-overview-desc">Curated readings from the Topic 1 folder, organized by where they're referenced across the course.</p>
+      <table class="audit-table">
+        <thead>
+          <tr><th>#</th><th>Source</th><th>Type</th><th>Most Relevant For</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Course Syllabus</td><td><span class="status-badge st-info">Document</span></td><td>All topics</td></tr>
+          <tr><td>2</td><td>AI Adoption in the Education System</td><td><span class="status-badge st-design">Report</span></td><td>Topic 02, 03</td></tr>
+          <tr><td>3</td><td>AI and the Future of Teaching and Learning</td><td><span class="status-badge st-design">Report</span></td><td>Topic 02, 03, 06</td></tr>
+          <tr><td>4</td><td>Impact of AI</td><td><span class="status-badge st-design">Reading</span></td><td>Topic 02, 11</td></tr>
+          <tr><td>5</td><td>Artificial Intelligence: The Impact of AI on Education</td><td><span class="status-badge st-design">Reading</span></td><td>Topic 02, 03</td></tr>
+          <tr><td>6</td><td>Guide to AI in Schools</td><td><span class="status-badge st-design">Practitioner Guide</span></td><td>Topic 03, 06, 13</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================ -->
+<!-- TOPIC 2 -->
+<!-- ================================================================ -->
+<div class="topic-panel" data-topic-panel="2">
+  <div class="sub-tabs">
+    <button class="sub-tab active" data-subtab="t2-overview">Overview</button>
+    <button class="sub-tab" data-subtab="t2-lecture">Lecture 1 &mdash; Concepts</button>
+    <button class="sub-tab" data-subtab="t2-resources">Resources</button>
+  </div>
+
+  <div class="sub-panel active" data-subpanel="t2-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 02</span> &mdash; Introduction</h2>
+      <p class="topic-overview-desc">Foundations of AI in Education. What AI is and isn't, how it actually works, and why it matters for educators today.</p>
+
+      <div class="session-card">
+        <div class="session-num">Lecture 01</div>
+        <h3>Foundations of AI in Education</h3>
+        <p class="session-meta">Week 02 &middot; Lecture + Live Demo &middot; 35 slides</p>
+        <ul>
+          <li>Have you used AI today? &mdash; from search results to GPS to ChatGPT</li>
+          <li>AI by the numbers &mdash; McKinsey, Stanford HAI, UNESCO 2024/25 figures</li>
+          <li>What AI is: pattern recognition, prediction, generation</li>
+          <li>What AI is not: thinking, reasoning, awareness, neutral</li>
+          <li>Narrow AI vs. Generative AI vs. AGI</li>
+          <li>AI across teaching, learning, assessment, decision-making</li>
+          <li>Strengths, limitations, opportunities, challenges</li>
+          <li>Activity: evaluating an AI response &mdash; 6 discussion questions</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-panel" data-subpanel="t2-lecture">
+    <div class="topic-overview-container">
+      <h2><span class="num">Lecture 01</span> &mdash; Concept Map</h2>
+      <p class="topic-overview-desc">Visual map of the foundational concepts introduced in Lecture 1, showing how the building blocks of AI literacy connect to its applications across teaching, learning, assessment, and decision-making.</p>
+
+      <div class="mermaid-container">
+<pre class="mermaid">
+flowchart TB
+    L1["Lecture 01<br/>Foundations of AI in Education"]:::root
+
+    L1 --> A["What is AI?"]:::concept
+    L1 --> B["How AI Works"]:::concept
+    L1 --> C["Types of AI"]:::concept
+    L1 --> D["AI in Education"]:::application
+    L1 --> E["Strengths &amp;<br/>Limitations"]:::evaluation
+    L1 --> F["Human Judgment &amp;<br/>Responsibility"]:::evaluation
+
+    A --> A1["Pattern recognition"]:::leaf
+    A --> A2["Prediction"]:::leaf
+    A --> A3["Content generation"]:::leaf
+    A --> A4["NOT human reasoning"]:::warn
+
+    B --> B1["Trained on large<br/>datasets"]:::leaf
+    B --> B2["Statistical<br/>patterns"]:::leaf
+    B --> B3["Probabilistic<br/>output"]:::leaf
+    B --> B4["Confidence &ne;<br/>correctness"]:::warn
+
+    C --> C1["Narrow AI<br/>(Netflix, Siri)"]:::leaf
+    C --> C2["Generative AI<br/>(ChatGPT, DALL-E)"]:::leaf
+    C --> C3["AGI<br/>(theoretical)"]:::leaf
+
+    D --> D1["Teaching"]:::leaf
+    D --> D2["Student Learning"]:::leaf
+    D --> D3["Assessment &amp;<br/>Feedback"]:::leaf
+    D --> D4["Educator<br/>Productivity"]:::leaf
+    D --> D5["Decision-Making<br/>(Analytics)"]:::leaf
+
+    E --> E1["Faster content<br/>creation"]:::leaf
+    E --> E2["Personalization"]:::leaf
+    E --> E3["Hallucination /<br/>incorrect output"]:::warn
+    E --> E4["Bias in<br/>training data"]:::warn
+    E --> E5["Privacy &amp;<br/>data security"]:::warn
+
+    F --> F1["AI = support tool,<br/>not replacement"]:::leaf
+    F --> F2["Educator owns:<br/>accuracy, judgment,<br/>guidance"]:::leaf
+    F --> F3["AI literacy is<br/>essential"]:::leaf
+
+    classDef root fill:#7A003C,stroke:#C8A951,stroke-width:3px,color:#F4EFE6,font-weight:bold
+    classDef concept fill:#5C002D,stroke:#C8A951,color:#F4EFE6
+    classDef application fill:#3B6B47,stroke:#C8A951,color:#F4EFE6
+    classDef evaluation fill:#C8853B,stroke:#C8A951,color:#1C1A19
+    classDef leaf fill:#2A2826,stroke:#3A3633,color:#EDE3D2
+    classDef warn fill:#B8453A,stroke:#C8A951,color:#F4EFE6
+</pre>
+      </div>
+
+      <div class="report-block">
+        <h3>Six AI Adoption Statistics &mdash; Lecture 01, Slide 8</h3>
+        <div class="prose">
+          <p><strong>88%</strong> of organizations report using AI in at least one business function (McKinsey Global Survey, 2025).</p>
+          <p><strong>78%</strong> of organizations worldwide adopted AI in 2024, up from 55% in 2023 (Stanford HAI Report, 2025).</p>
+          <p>Global AI market projected from <strong>$391B (2025)</strong> to <strong>$1.8T by 2030</strong>.</p>
+          <p>More than <strong>75% of countries</strong> have integrated or are experimenting with AI in education (UNESCO, 2024).</p>
+          <p>Two-thirds of higher education institutions are developing AI policies (UNESCO Survey, 2025).</p>
+          <p><strong>77%</strong> of educators believe AI is useful in education (Carnegie Learning / UNESCO, 2024).</p>
+          <p>AI-driven EdTech usage increased by <strong>400% between 2016 and 2023</strong> (UNESCO).</p>
+        </div>
+      </div>
+
+      <div class="report-block">
+        <h3>Three Classroom Distinctions Worth Memorizing</h3>
+        <div class="prose">
+          <p><strong>Narrow AI vs. Generative AI vs. AGI.</strong> Narrow AI does one thing well (Netflix recommendations, Siri). Generative AI creates new content from patterns (ChatGPT, DALL-E, Copilot). AGI &mdash; human-level general intelligence &mdash; <em>does not yet exist</em> and is contested.</p>
+          <p><strong>Prediction, not understanding.</strong> Generative AI produces outputs by predicting the next likely token. Fluent and confident answers are not the same as correct answers. <em>Confidence does not equal correctness.</em></p>
+          <p><strong>Tool, not teacher.</strong> AI accelerates planning, drafting, feedback, and analytics. It does not replace the educator's judgment about content accuracy, assessment fairness, or what an individual student needs.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-panel" data-subpanel="t2-resources">
+    <div class="topic-overview-container">
+      <h2><span class="num">Resources</span> &mdash; Topic 2 Materials</h2>
+      <p class="topic-overview-desc">Files from the Topic 2 OneDrive folder and the AUB LMS Introduction block.</p>
+      <div class="lms-block">
+        <div class="lms-block-header">Introduction</div>
+        <ul class="lms-resources">
+          <li><span class="lms-icon ppt">PPT</span>Lecture 1 &mdash; Foundations of AI in Education (35 slides)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================ -->
+<!-- TOPIC 3 -->
+<!-- ================================================================ -->
+<div class="topic-panel" data-topic-panel="3">
+  <div class="sub-tabs">
+    <button class="sub-tab active" data-subtab="t3-overview">Overview</button>
+    <button class="sub-tab" data-subtab="t3-lecture">Lecture 2 &mdash; Concepts</button>
+    <button class="sub-tab" data-subtab="t3-architectures">AI Architectures</button>
+    <button class="sub-tab" data-subtab="t3-prompting">Prompt Engineering</button>
+    <button class="sub-tab" data-subtab="t3-resources">Resources</button>
+    <button class="sub-tab" data-subtab="t3-assignment">Practice Assignment</button>
+  </div>
+
+  <div class="sub-panel active" data-subpanel="t3-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 03</span> &mdash; Generative AI in Education</h2>
+      <p class="topic-overview-desc">Lecture 2 covers the concepts, capabilities, and educational use of generative AI &mdash; from the architectures behind the tools (Transformers, Diffusion, GANs, VAEs, Multimodal) to the five-step training pipeline, prompt engineering, and the limitations every educator must internalize. The hands-on practice assignment applies these concepts to a real student-performance analysis.</p>
+
+      <div class="session-card">
+        <div class="session-num">Lecture 02</div>
+        <h3>Generative AI: Concepts, Capabilities, and Educational Use</h3>
+        <p class="session-meta">Week 03 &middot; Lecture + Recording on AUB LMS &middot; 42 slides</p>
+        <ul>
+          <li>What generative AI is &mdash; and the core distinction from traditional AI</li>
+          <li>The five generative architectures: Transformers, Diffusion, GANs, VAEs, Multimodal</li>
+          <li>The training pipeline: Data &rarr; Pre-Training &rarr; Fine-Tuning &rarr; RLHF &rarr; Inference</li>
+          <li>Tokens, context windows, and why prompt length matters</li>
+          <li>Five limitations: Hallucinations, Bias, Over-reliance, Academic Integrity, Data Privacy</li>
+          <li>Live hallucination example &mdash; three fabricated citations</li>
+          <li>The five-element prompt framework: Role, Audience, Task, Format, Constraint</li>
+          <li>When to use AI, when not to &mdash; five real classroom scenarios</li>
+        </ul>
+      </div>
+
+      <div class="session-card">
+        <div class="session-num">Practice</div>
+        <h3>Hands-On: Analyzing Student Performance with AI</h3>
+        <p class="session-meta">Week 03 &middot; Practical Workshop &middot; Submitted via LMS</p>
+        <ul>
+          <li>Apply the prompt framework to a real dataset (8 students, 4 quizzes)</li>
+          <li>Generate visualizations using AI assistance</li>
+          <li>Critical review: what to verify, what to rewrite</li>
+          <li>Reflection on AI strengths, gaps, and teacher accountability</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ T3 LECTURE 2 CONCEPTS ============ -->
+  <div class="sub-panel" data-subpanel="t3-lecture">
+    <div class="topic-overview-container">
+      <h2><span class="num">Lecture 02</span> &mdash; Concept Map</h2>
+      <p class="topic-overview-desc">Lecture 2 (42 slides) is structured around four pillars: <em>what generative AI is</em>, <em>how it is built</em>, <em>how to use it well</em>, and <em>what it cannot do</em>. The map below shows how the lecture's concepts connect.</p>
+
+      <div class="mermaid-container">
+<pre class="mermaid">
+flowchart TB
+    L2["Lecture 02<br/>Generative AI: Concepts,<br/>Capabilities &amp; Use"]:::root
+
+    L2 --> P1["What is GenAI?"]:::concept
+    L2 --> P2["How is it built?"]:::concept
+    L2 --> P3["How to use it well"]:::application
+    L2 --> P4["What it cannot do"]:::evaluation
+
+    P1 --> P1a["Creates new content<br/>from learned patterns"]:::leaf
+    P1 --> P1b["Traditional vs. Generative AI"]:::leaf
+    P1 --> P1c["Output types:<br/>text, image, audio,<br/>video, code, 3D"]:::leaf
+
+    P2 --> P2a["5 Architectures<br/>Transformers, Diffusion,<br/>GANs, VAEs, Multimodal"]:::leaf
+    P2 --> P2b["Training Pipeline<br/>5 stages"]:::leaf
+    P2 --> P2c["Tokens &amp;<br/>Context Windows"]:::leaf
+
+    P3 --> P3a["Capability Domains<br/>Content, Personalization,<br/>Automation, Brainstorming"]:::leaf
+    P3 --> P3b["Prompt Framework<br/>Role-Audience-Task-<br/>Format-Constraint"]:::leaf
+    P3 --> P3c["Tool Landscape<br/>ChatGPT, Claude, Gemini,<br/>DALL-E, Gamma"]:::leaf
+    P3 --> P3d["When to use AI /<br/>When NOT to"]:::leaf
+
+    P4 --> P4a["Hallucinations"]:::warn
+    P4 --> P4b["Inherited Bias"]:::warn
+    P4 --> P4c["Over-Reliance"]:::warn
+    P4 --> P4d["Academic Integrity"]:::warn
+    P4 --> P4e["Data Privacy<br/>(FERPA / GDPR)"]:::warn
+
+    classDef root fill:#7A003C,stroke:#C8A951,stroke-width:3px,color:#F4EFE6,font-weight:bold
+    classDef concept fill:#5C002D,stroke:#C8A951,color:#F4EFE6
+    classDef application fill:#3B6B47,stroke:#C8A951,color:#F4EFE6
+    classDef evaluation fill:#C8853B,stroke:#C8A951,color:#1C1A19
+    classDef leaf fill:#2A2826,stroke:#3A3633,color:#EDE3D2
+    classDef warn fill:#B8453A,stroke:#C8A951,color:#F4EFE6
+</pre>
+      </div>
+
+      <div class="report-block">
+        <h3>Traditional AI vs. Generative AI &mdash; The Core Distinction</h3>
+        <div class="prose">
+          <p><strong>Traditional AI is analytical.</strong> It classifies, predicts, or decides. It is trained on labelled, structured data, scoped to one task per model, and produces categories or scores. Examples: email spam filters, fraud detection, loan credit scoring.</p>
+          <p><strong>Generative AI is creative.</strong> It creates new content from learned patterns. It is trained on massive unlabelled data (web, books, code), is general-purpose, and produces text, images, audio, video, or structured data. Examples: ChatGPT, Claude, Gemini, DALL&middot;E, Midjourney, Sora.</p>
+          <p><em>Key insight:</em> Generative AI doesn't just analyze data &mdash; it creates new content from statistical patterns learned at enormous scale.</p>
+        </div>
+      </div>
+
+      <div class="report-block">
+        <h3>Five Limitations Every Educator Must Internalize</h3>
+        <div class="prose">
+          <p><strong>1. Hallucinations.</strong> AI generates plausible-sounding but factually incorrect information &mdash; fake citations, wrong statistics, invented events &mdash; with full confidence and no warning. <em>Treat all AI output as a draft. Verify claims against authoritative sources.</em></p>
+          <p><strong>2. Inherited Bias.</strong> Models learn from human-generated data and absorb societal biases (race, gender, culture, geography, class). <em>Critically examine whose perspective is centered. Prompt for diverse viewpoints explicitly.</em></p>
+          <p><strong>3. Over-Reliance.</strong> Students who use AI as a shortcut bypass the cognitive effort that produces genuine learning. <em>The struggle IS the learning.</em> Design tasks that require evidence of process, not just product.</p>
+          <p><strong>4. Academic Integrity.</strong> AI-generated work submitted as a student's own is academic dishonesty, and detection tools remain unreliable. <em>Rethink assessments toward personalization, process documentation, and oral or live components.</em></p>
+          <p><strong>5. Data Privacy.</strong> Public AI tools may log conversations, train on inputs, or violate FERPA / GDPR. <em>Never enter real student names, IDs, grades, or sensitive data into public AI tools. Use institution-approved platforms.</em></p>
+        </div>
+      </div>
+
+      <div class="report-block">
+        <h3>Live Example: Hallucination &mdash; Lecture 2, Slide 20</h3>
+        <p><strong>Prompt to GPT-4:</strong> <em>"Please cite three peer-reviewed studies on AI-assisted learning published in 2022."</em></p>
+        <div class="prompt-box">1. Johnson, R., &amp; Lee, M. (2022). AI adaptive systems in K&ndash;12 education.
+   Journal of Educational Technology, 45(2), pp. 112&ndash;128.
+
+2. Garc&iacute;a, F., Nguyen, T., &amp; Park, S. (2022). Personalised learning outcomes
+   using large language models. International Review of Education, 68(4),
+   pp. 334&ndash;351.
+
+3. Chen, W., &amp; Patel, A. (2022). Ethical considerations in AI-powered tutoring
+   systems. Computers &amp; Education, 181, Article 104450.</div>
+        <p style="margin-top: 1rem;"><strong>Result:</strong> NONE of these articles exist. All three were verified as fabricated via Google Scholar, PubMed, and direct journal searches. The model invented author names, journal volumes, page numbers, and DOIs &mdash; with full confidence.</p>
+      </div>
+
+      <div class="report-block">
+        <h3>When to Use AI &middot; When NOT to Use AI</h3>
+        <div class="prose">
+          <p><strong>Use AI for:</strong> drafting lesson plans and materials, brainstorming, generating question banks, analyzing structured data (e.g., student performance), explaining concepts at multiple levels.</p>
+          <p><strong>Do NOT use AI for:</strong> situations where accuracy is critical and unverifiable, when human judgment and nuance are essential, when handling sensitive or emotional student situations, when student learning requires effort and critical thinking, when handling private or confidential data.</p>
+          <p style="font-size: 0.9rem; color: var(--aub-gold-soft); font-style: italic;">Key principle: Use AI as a support tool, not a replacement for professional judgment.</p>
+        </div>
+      </div>
+
+      <div class="report-block">
+        <h3>Closing Quote &mdash; Lecture 2, Final Slide</h3>
+        <div class="prose">
+          <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--aub-gold); font-style: italic; line-height: 1.4;">"AI will not replace educators &mdash; but educators who use AI will lead the future."</p>
+          <p>The educator's role shifts from <strong>information provider</strong> to <strong>learning architect</strong> &mdash; someone who selects, contextualizes, and critically applies the best available tools in service of student growth.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ T3 AI ARCHITECTURES ============ -->
+  <div class="sub-panel" data-subpanel="t3-architectures">
+    <div class="topic-overview-container">
+      <h2><span class="num">AI Architectures</span> &mdash; The Five Generative Model Families</h2>
+      <p class="topic-overview-desc">Lecture 2, Slide 9 introduces the five architectures behind today's generative AI tools. Each has a different mathematical core, a different training regime, and different educational use cases. Knowing which architecture sits behind a tool tells you what it's good and bad at.</p>
+
+      <div class="parts-grid">
+        <div class="part-card">
+          <div class="part-num">Arch 1</div>
+          <h3>Transformers</h3>
+          <p style="color: var(--aub-stone); font-size: 0.88rem; margin-bottom: 0.85rem; line-height: 1.5;">The backbone of most modern text AI. Uses <em>self-attention</em> to understand the relationship between words in a sequence. Powers all major Large Language Models (LLMs).</p>
+          <ul>
+            <li><strong>Powers:</strong> ChatGPT, Claude, Gemini, Llama</li>
+            <li><strong>Best for:</strong> Text generation, reasoning, code</li>
+            <li><strong>Strength:</strong> Long-range coherence in text</li>
+          </ul>
+        </div>
+        <div class="part-card">
+          <div class="part-num">Arch 2</div>
+          <h3>Diffusion Models</h3>
+          <p style="color: var(--aub-stone); font-size: 0.88rem; margin-bottom: 0.85rem; line-height: 1.5;">Today's standard for image generation. Start from random noise and iteratively <em>denoise</em> it step-by-step into a clear image guided by a text prompt.</p>
+          <ul>
+            <li><strong>Powers:</strong> DALL&middot;E, Midjourney, Stable Diffusion</li>
+            <li><strong>Best for:</strong> Visual aids, infographics, illustrations</li>
+            <li><strong>Strength:</strong> High-quality image synthesis</li>
+          </ul>
+        </div>
+        <div class="part-card">
+          <div class="part-num">Arch 3</div>
+          <h3>GANs</h3>
+          <p style="color: var(--aub-stone); font-size: 0.88rem; margin-bottom: 0.85rem; line-height: 1.5;">Generative Adversarial Networks use two competing networks &mdash; a <em>generator</em> (the artist) and a <em>discriminator</em> (the critic) &mdash; to produce realistic content through adversarial training.</p>
+          <ul>
+            <li><strong>Powers:</strong> Deepfake generation, style transfer</li>
+            <li><strong>Best for:</strong> Realistic synthetic media</li>
+            <li><strong>Caution:</strong> Powerful misuse potential</li>
+          </ul>
+        </div>
+        <div class="part-card">
+          <div class="part-num">Arch 4</div>
+          <h3>VAEs</h3>
+          <p style="color: var(--aub-stone); font-size: 0.88rem; margin-bottom: 0.85rem; line-height: 1.5;">Variational Autoencoders compress data into a simplified latent representation and reconstruct it to create variations &mdash; like learning to squeeze a high-quality photo into a tiny "summary" and then build new things from that summary.</p>
+          <ul>
+            <li><strong>Powers:</strong> Image reconstruction, data interpolation</li>
+            <li><strong>Best for:</strong> Variation generation, dimensionality reduction</li>
+            <li><strong>Strength:</strong> Smooth latent-space interpolation</li>
+          </ul>
+        </div>
+        <div class="part-card">
+          <div class="part-num">Arch 5</div>
+          <h3>Multimodal Models</h3>
+          <p style="color: var(--aub-stone); font-size: 0.88rem; margin-bottom: 0.85rem; line-height: 1.5;">Handle and generate <em>multiple types</em> of data &mdash; text, images, audio &mdash; in one unified system. The current frontier of consumer-facing AI.</p>
+          <ul>
+            <li><strong>Powers:</strong> GPT-4o, Gemini 1.5, Claude 3</li>
+            <li><strong>Best for:</strong> Image+text reasoning, real-world tasks</li>
+            <li><strong>Strength:</strong> Cross-modal grounding</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 style="margin-top: 3rem;"><span class="num">#2</span> The Training Pipeline &mdash; Five Stages</h2>
+      <p class="section-desc">From Slide 11: how a generative model goes from raw data on the internet to the response you see in a chat window.</p>
+
+      <div class="mermaid-container">
+<pre class="mermaid">
+flowchart LR
+    S1["01<br/>Data Collection<br/>~1T+ tokens"]:::stage
+    S2["02<br/>Pre-Training<br/>Self-supervised"]:::stage
+    S3["03<br/>Fine-Tuning<br/>Supervised"]:::stage
+    S4["04<br/>RLHF<br/>Human feedback"]:::stage
+    S5["05<br/>Inference<br/>Your prompt"]:::final
+
+    S1 -->|"web pages,<br/>books,<br/>code repos"| S2
+    S2 -->|"learns to predict<br/>next tokens<br/>across billions<br/>of parameters"| S3
+    S3 -->|"curated<br/>instruction data"| S4
+    S4 -->|"human raters score<br/>helpfulness, accuracy,<br/>safety"| S5
+
+    classDef stage fill:#5C002D,stroke:#C8A951,color:#F4EFE6,stroke-width:2px
+    classDef final fill:#3B6B47,stroke:#C8A951,color:#F4EFE6,stroke-width:2px
+</pre>
+      </div>
+
+      <div class="report-block">
+        <h3>What each stage actually does</h3>
+        <div class="prose">
+          <p><strong>1. Data Collection (~1T+ tokens).</strong> Billions of web pages, books, academic papers, code repositories, and conversations are gathered, deduplicated, and cleaned.</p>
+          <p><strong>2. Pre-Training (self-supervised).</strong> The model learns to predict masked or next tokens by adjusting billions of internal weights across thousands of GPU-hours. <em>This is where most of the cost and learning happens.</em></p>
+          <p><strong>3. Fine-Tuning (supervised).</strong> The model is trained on higher-quality curated data to follow instructions, answer questions, and stay on topic.</p>
+          <p><strong>4. RLHF (Reinforcement Learning from Human Feedback).</strong> Human raters score model outputs for helpfulness, accuracy, and safety. The model is refined using reinforcement learning to prefer outputs humans rated highly.</p>
+          <p><strong>5. Inference (your prompt).</strong> You provide context and a question. The model generates a response <em>one token at a time</em> using learned patterns. This is the only stage you interact with directly.</p>
+        </div>
+      </div>
+
+      <h2 style="margin-top: 3rem;"><span class="num">#3</span> Output Types &amp; Educational Tools</h2>
+      <p class="section-desc">From Slide 13: which architectures power which tools, and where they fit in the classroom.</p>
+      <table class="audit-table">
+        <thead>
+          <tr><th>Output Type</th><th>Architecture</th><th>Key Tools</th><th>Educational Application</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Text</strong></td><td>Transformer (LLM)</td><td>ChatGPT, Claude, Gemini, Llama</td><td>Lesson plans, feedback drafts, rubrics, multi-level explanations</td></tr>
+          <tr><td><strong>Images</strong></td><td>Diffusion</td><td>DALL&middot;E, Midjourney, Stable Diffusion</td><td>Visual aids, infographics, illustrated explanations, creative projects</td></tr>
+          <tr><td><strong>Audio</strong></td><td>Transformer / Diffusion</td><td>ElevenLabs, Murf, Speechify, Suno</td><td>Narrated materials, accessibility support, language-learning audio</td></tr>
+          <tr><td><strong>Video</strong></td><td>Diffusion / Multimodal</td><td>Sora, Runway, Synthesia, HeyGen</td><td>Explainer videos, virtual simulations, instructor-avatar content</td></tr>
+          <tr><td><strong>Code</strong></td><td>Transformer (code-tuned)</td><td>GitHub Copilot, Claude, Replit AI</td><td>Coding tutorials, debugging, automated test generation</td></tr>
+          <tr><td><strong>Multimodal</strong></td><td>Multimodal Transformer</td><td>GPT-4o, Gemini 1.5, Claude 3</td><td>Image + text reasoning; real-world problem-solving tasks</td></tr>
+        </tbody>
+      </table>
+
+      <h2 style="margin-top: 3rem;"><span class="num">#4</span> Tokens &amp; Context Windows</h2>
+      <p class="section-desc">From Slide 16: why prompt length, chunking, and session memory matter.</p>
+
+      <div class="report-block">
+        <h3>What is a Token?</h3>
+        <div class="prose">
+          <p>AI models don't process words &mdash; they process <strong>tokens</strong>. A token is a unit of text (a word, part of a word, or a character), preferably 2&ndash;4 characters. Example: <em>"misunderstanding"</em> &rarr; <code>mis</code> &middot; <code>under</code> &middot; <code>stand</code> &middot; <code>ing</code> = 4 tokens. The word <em>"and"</em> is 1 token.</p>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-value">128K</div><div class="stat-label">GPT-4o Context (~100K words)</div></div>
+        <div class="stat-card"><div class="stat-value">200K</div><div class="stat-label">Claude 3.5 Context (~150K words)</div></div>
+        <div class="stat-card"><div class="stat-value">~4 chars</div><div class="stat-label">Avg. Token Size</div></div>
+        <div class="stat-card"><div class="stat-value">No</div><div class="stat-label">Default Memory Across Sessions</div></div>
+      </div>
+
+      <div class="report-block">
+        <h3>Why this matters for educators</h3>
+        <div class="prose">
+          <p><strong>Prompt length matters.</strong> Longer, more detailed prompts almost always produce better outputs &mdash; context is not wasted, it is used.</p>
+          <p><strong>Chunk long content.</strong> Paste one chapter at a time rather than an entire textbook. AI works better with clear, focused sections.</p>
+          <p><strong>Memory between sessions.</strong> Most tools do <em>not</em> remember previous conversations by default. Each session starts fresh unless you re-paste the relevant context.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ T3 PROMPT ENGINEERING ============ -->
+  <div class="sub-panel" data-subpanel="t3-prompting">
+    <div class="topic-overview-container">
+      <h2><span class="num">Prompt Engineering</span> &mdash; The Five-Element Framework</h2>
+      <p class="topic-overview-desc">From Slide 31: every strong educational prompt shares five elements &mdash; <strong>Role</strong>, <strong>Audience</strong>, <strong>Task</strong>, <strong>Format</strong>, <strong>Constraint</strong>. The framework is simple, but the difference in output quality between a weak and a strong prompt is dramatic.</p>
+
+      <div class="parts-grid">
+        <div class="part-card">
+          <div class="part-num">Element 1</div>
+          <h3>Role</h3>
+          <ul>
+            <li>Who should the AI act as?</li>
+            <li>e.g., "experienced middle school science teacher"</li>
+            <li>Anchors tone, vocabulary, depth</li>
+          </ul>
+        </div>
+        <div class="part-card">
+          <div class="part-num">Element 2</div>
+          <h3>Audience</h3>
+          <ul>
+            <li>Who is the output for?</li>
+            <li>e.g., "Grade 7 students with no prior background"</li>
+            <li>Drives complexity and examples</li>
+          </ul>
+        </div>
+        <div class="part-card">
+          <div class="part-num">Element 3</div>
+          <h3>Task</h3>
+          <ul>
+            <li>What exactly should be produced?</li>
+            <li>e.g., "design a 40-minute lesson on photosynthesis"</li>
+            <li>Be specific and bounded</li>
+          </ul>
+        </div>
+        <div class="part-card">
+          <div class="part-num">Element 4</div>
+          <h3>Format</h3>
+          <ul>
+            <li>What structure should the output take?</li>
+            <li>e.g., "objectives, activities, assessment"</li>
+            <li>Critical for downstream re-use</li>
+          </ul>
+        </div>
+        <div class="part-card">
+          <div class="part-num">Element 5</div>
+          <h3>Constraint</h3>
+          <ul>
+            <li>What rules or limits apply?</li>
+            <li>e.g., "use simple language, one real-life example"</li>
+            <li>Prevents drift and verbosity</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 style="margin-top: 3rem;"><span class="num">#2</span> Weak vs. Strong &mdash; Side-by-Side</h2>
+      <p class="section-desc">Two contrasting examples from Slide 31 showing how the framework transforms output quality.</p>
+
+      <div class="report-block">
+        <h3>Lesson Plan Prompt</h3>
+        <p><strong>WEAK:</strong> <em>Create a lesson plan on photosynthesis</em></p>
+        <p><strong>STRONG:</strong></p>
+        <div class="prompt-box">Act as an experienced middle school science teacher (ROLE),
+and design a 40-minute lesson on photosynthesis for Grade 7
+students (AUDIENCE &amp; TASK).
+
+Present the lesson in a clear structure including objectives,
+activities, and a short assessment (FORMAT).
+
+Use simple language and include one real-life example;
+assume students have no prior background knowledge (CONSTRAINTS).</div>
+      </div>
+
+      <div class="report-block">
+        <h3>Assessment Prompt</h3>
+        <p><strong>WEAK:</strong> <em>Create quiz questions on climate change</em></p>
+        <p><strong>STRONG:</strong></p>
+        <div class="prompt-box">Act as an assessment specialist in secondary education (ROLE),
+and create 5 multiple-choice questions on climate change for
+Grade 9 students (AUDIENCE &amp; TASK).
+
+Provide one correct answer and three plausible distractors for
+each question (FORMAT).
+
+Ensure questions test understanding, not memorization, and avoid
+overly simple or ambiguous wording (CONSTRAINTS).</div>
+      </div>
+
+      <h2 style="margin-top: 3rem;"><span class="num">#3</span> Smart Tip &mdash; Use AI to Improve Your Prompts</h2>
+      <p class="section-desc">From Slide 32: a recursive trick that often works better than writing the perfect prompt yourself.</p>
+      <div class="report-block">
+        <div class="prose">
+          <p>Treat AI as a <strong>collaborator</strong>, not just a tool. Ask it to refine and structure your request before answering it.</p>
+          <p><strong>Original:</strong> <em>Create a lesson plan on climate change</em></p>
+          <p><strong>Recursive prompt:</strong></p>
+          <div class="prompt-box">Act as a prompt engineer and improve the following prompt:
+"Create a lesson plan on climate change."</div>
+          <p style="margin-top: 1rem;">Then feed the improved prompt back to the same or a different AI tool. The output is almost always sharper.</p>
+        </div>
+      </div>
+
+      <h2 style="margin-top: 3rem;"><span class="num">#4</span> Use AI or Not? &mdash; Five Scenarios</h2>
+      <p class="section-desc">From Slides 40&ndash;41: a concrete decision rubric for everyday classroom situations.</p>
+      <table class="audit-table">
+        <thead>
+          <tr><th>#</th><th>Scenario</th><th>Decision</th><th>Reason</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>A student asks for emotional support after failing an exam</td><td><span class="status-badge st-risk">Do NOT use AI</span></td><td>Requires empathy and human understanding</td></tr>
+          <tr><td>2</td><td>You need a quick draft of a lesson plan for a new topic</td><td><span class="status-badge st-fixed">Use &amp; modify</span></td><td>Good for drafting, needs adaptation</td></tr>
+          <tr><td>3</td><td>You are grading a complex essay requiring interpretation</td><td><span class="status-badge st-info">Limited use</span></td><td>AI cannot fully evaluate complex work</td></tr>
+          <tr><td>4</td><td>You want to analyze student grade data for patterns</td><td><span class="status-badge st-fixed">Use AI</span></td><td>Strong for identifying patterns in structured data</td></tr>
+          <tr><td>5</td><td>A student asks a factual question during class</td><td><span class="status-badge st-fixed">Use &amp; verify</span></td><td>Useful for quick support, but must verify accuracy</td></tr>
+        </tbody>
+      </table>
+
+      <div class="report-block" style="margin-top: 2rem;">
+        <h3>Which one was AI-generated? &mdash; The Slide 33&ndash;34 Twist</h3>
+        <div class="prose">
+          <p>Lecture 2 shows two paragraph-length explanations of climate change side by side and asks the class to identify which is human and which is AI. <strong>The answer is: both are AI.</strong></p>
+          <p>The difference between them is not authorship &mdash; it is <em>prompt quality</em>. The shorter, weaker response came from <em>"Explain climate change."</em> The longer, more sophisticated response came from <em>"Act as an experienced educator and explain climate change to high school students in a clear and slightly academic tone..."</em></p>
+          <p>The pedagogical takeaway: distinguishing AI from human writing is unreliable. The reliable thing is to <strong>own the prompt</strong> and <strong>own the editing</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-panel" data-subpanel="t3-resources">
+    <div class="topic-overview-container">
+      <h2><span class="num">Resources</span> &mdash; Topic 3 Materials</h2>
+      <p class="topic-overview-desc">Mirrors the Generative AI in Education block on the AUB LMS plus the Topic 3 OneDrive folder.</p>
+      <div class="lms-block">
+        <div class="lms-block-header">Generative AI in Education</div>
+        <ul class="lms-resources">
+          <li><span class="lms-icon rec">REC</span>Lecture 2 &mdash; Recording (live class)</li>
+          <li><span class="lms-icon ppt">PPT</span>Lecture 2 &mdash; Slides (42 slides) &middot; Concepts, Capabilities, Educational Use</li>
+          <li><span class="lms-icon assign">PDF</span>Practice Assignment &mdash; Generative AI Practice Analysis (2 pages)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-panel" data-subpanel="t3-assignment">
+
+    <div class="mini-project-nav">
+      <ul>
+        <li><a href="#t3a-overview">Overview</a></li>
+        <li><a href="#t3a-brief">Assignment Brief</a></li>
+        <li><a href="#t3a-dataset">Dataset</a></li>
+        <li><a href="#t3a-analysis">Analysis</a></li>
+        <li><a href="#t3a-chart">Visualization</a></li>
+        <li><a href="#t3a-report">Report</a></li>
+        <li><a href="#t3a-reflection">Reflection</a></li>
+      </ul>
+    </div>
+
+    <header class="hero" id="t3a-overview">
+      <h1>Practice Assignment <span class="accent">&mdash;</span> Topic 03</h1>
+      <p>Analyzing Student Performance Using AI</p>
+      <div class="badge">8 students &middot; 4 quizzes &middot; AI-assisted analysis &middot; teacher report</div>
+    </header>
+
+    <section id="t3a-brief">
+      <h2><span class="num">#0</span> Assignment Brief</h2>
+      <p class="section-desc">The complete task description, instructions, reflection prompts, and submission requirements as distributed in the AUB LMS Practice Assignment PDF.</p>
+
+      <div class="report-block">
+        <h3>Scenario</h3>
+        <div class="prose">
+          <p>You are a teacher who has just completed a full semester with your class. You would like to understand how your students performed overall and identify any patterns in their results.</p>
+          <p>You have been asked to prepare a short report for the <strong>Head of the Educational Unit</strong> (or Academic Coordinator) to explain how your students are doing after you graded <strong>4 quizzes of equal weights</strong>.</p>
+        </div>
+      </div>
+
+      <div class="report-block">
+        <h3>Task</h3>
+        <div class="prose">
+          <p>Using the sample dataset for a class of 8 students, analyze student performance and generate a short report (no more than 1&ndash;2 pages) that summarizes the overall situation of the class. You are encouraged to use a GenAI tool (such as ChatGPT, Claude, Gemini, or any other) to assist in analyzing the data.</p>
+        </div>
+      </div>
+
+      <div class="report-block">
+        <h3>Instructions &mdash; Report Must Include</h3>
+        <ul style="list-style: none; padding: 0; color: var(--aub-stone); font-size: 0.94rem;">
+          <li style="padding: 0.4rem 0 0.4rem 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--aub-gold); font-weight: 700;">1.</span> Use an AI tool to analyze the dataset</li>
+          <li style="padding: 0.4rem 0 0.4rem 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--aub-gold); font-weight: 700;">2.</span> Write a clear, concise report addressed to the Head of the Educational Unit</li>
+          <li style="padding: 0.4rem 0 0.4rem 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--aub-gold); font-weight: 700;">3.</span> Include at least one data visual with a clear title (try using AI to generate the graph)</li>
+          <li style="padding: 0.4rem 0 0.4rem 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--aub-gold); font-weight: 700;">4.</span> Describe overall class performance</li>
+          <li style="padding: 0.4rem 0 0.4rem 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--aub-gold); font-weight: 700;">5.</span> Identify patterns or trends</li>
+          <li style="padding: 0.4rem 0 0.4rem 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--aub-gold); font-weight: 700;">6.</span> Provide at least one recommendation for improving student performance</li>
+        </ul>
+      </div>
+
+      <div class="report-block">
+        <h3>Required Reflection Questions</h3>
+        <p>After generating the AI response, briefly reflect on the following:</p>
+        <ul style="list-style: none; padding: 0; color: var(--aub-stone); font-size: 0.94rem;">
+          <li style="padding: 0.4rem 0 0.4rem 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--aub-gold);">&#10067;</span> What did the AI do well?</li>
+          <li style="padding: 0.4rem 0 0.4rem 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--aub-gold);">&#10067;</span> What did the AI miss, and did you modify anything?</li>
+          <li style="padding: 0.4rem 0 0.4rem 1.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--aub-gold);">&#10067;</span> Would you rely on this report as a teacher? Why or why not?</li>
+        </ul>
+      </div>
+
+      <div class="report-block">
+        <h3>Important Notes (from the assignment PDF)</h3>
+        <div class="prose">
+          <p><strong>&middot;</strong> AI should be used as a <em>support tool, not as a replacement</em>.</p>
+          <p><strong>&middot;</strong> You are responsible for reviewing and improving the output.</p>
+          <p><strong>&middot;</strong> Clearly indicate where AI was used.</p>
+        </div>
+      </div>
+
+      <div class="report-block">
+        <h3>Submission Requirements</h3>
+        <div class="prose">
+          <p><strong>1.</strong> Final report (no more than 1&ndash;2 pages) including the visual, the analysis, and the brief reflection. <em>Include your name and ID in the report.</em></p>
+          <p><strong>2.</strong> The AI prompt(s) you used, included in the report.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="num">#1</span> Project Overview</h2>
+      <p class="section-desc">A teacher-perspective exercise: take a small class dataset, use a generative AI tool to draw out patterns, and produce a 1&ndash;2 page brief for the Head of the Educational Unit. The deliverable is the brief itself plus a short reflection on what the AI did well and what required teacher judgment.</p>
+
+      <div class="parts-grid">
+        <div class="part-card">
+          <div class="part-num">Part 1</div>
+          <h3>Data &amp; Prompting</h3>
+          <ul>
+            <li>4 quiz scores per student &mdash; equal weights</li>
+            <li>Prompt designed to extract averages, ranges, trends</li>
+            <li>Tool used: Claude (alternatives: ChatGPT, Gemini)</li>
+          </ul>
+        </div>
+        <div class="part-card">
+          <div class="part-num">Part 2</div>
+          <h3>Analysis</h3>
+          <ul>
+            <li>Class average per quiz</li>
+            <li>Per-student trajectory across the four quizzes</li>
+            <li>Identification of consistent, improving, declining students</li>
+          </ul>
+        </div>
+        <div class="part-card">
+          <div class="part-num">Part 3</div>
+          <h3>Visual</h3>
+          <ul>
+            <li>Grouped bar chart: each student &times; 4 quizzes</li>
+            <li>AUB heritage palette (maroon, cedar, gold, terracotta)</li>
+            <li>Title and per-quiz legend</li>
+          </ul>
+        </div>
+        <div class="part-card">
+          <div class="part-num">Part 4</div>
+          <h3>Reflection</h3>
+          <ul>
+            <li>What the AI did well</li>
+            <li>What was missed and what was modified</li>
+            <li>Whether the AI report would be relied upon as-is</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="deliverables-section">
+        <h2><span class="num">Deliverables</span> Checklist</h2>
+        <ul class="checklist">
+          <li><span class="check-icon">&#10003;</span> 1&ndash;2 page report addressed to the Head of the Educational Unit</li>
+          <li><span class="check-icon">&#10003;</span> At least one titled data visual (grouped bar chart)</li>
+          <li><span class="check-icon">&#10003;</span> Description of overall class performance</li>
+          <li><span class="check-icon">&#10003;</span> Identified patterns and trends</li>
+          <li><span class="check-icon">&#10003;</span> At least one concrete recommendation</li>
+          <li><span class="check-icon">&#10003;</span> AI prompt(s) used, included verbatim in the report</li>
+          <li><span class="check-icon">&#10003;</span> Brief reflection answering all three reflection questions</li>
+          <li><span class="check-icon">&#10003;</span> Student name and ID on the report</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="t3a-dataset">
+      <h2><span class="num">#2</span> Dataset</h2>
+      <p class="section-desc">Class of 8 students, 4 equally-weighted quizzes. Scores out of 100.</p>
+      <table class="audit-table">
+        <thead>
+          <tr><th>Student</th><th>Quiz 1</th><th>Quiz 2</th><th>Quiz 3</th><th>Quiz 4</th><th>Average</th><th>Trajectory</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>A</strong></td><td>85</td><td>88</td><td>90</td><td>87</td><td><strong>87.5</strong></td><td><span class="status-badge st-fixed">Stable / High</span></td></tr>
+          <tr><td><strong>B</strong></td><td>60</td><td>65</td><td>70</td><td>89</td><td><strong>71.0</strong></td><td><span class="status-badge st-fixed">Strong improvement</span></td></tr>
+          <tr><td><strong>C</strong></td><td>92</td><td>94</td><td>95</td><td>93</td><td><strong>93.5</strong></td><td><span class="status-badge st-fixed">Top performer</span></td></tr>
+          <tr><td><strong>D</strong></td><td>55</td><td>53</td><td>60</td><td>46</td><td><strong>53.5</strong></td><td><span class="status-badge st-risk">Declining / At risk</span></td></tr>
+          <tr><td><strong>E</strong></td><td>78</td><td>80</td><td>85</td><td>88</td><td><strong>82.8</strong></td><td><span class="status-badge st-fixed">Steady improvement</span></td></tr>
+          <tr><td><strong>F</strong></td><td>70</td><td>72</td><td>91</td><td>93</td><td><strong>81.5</strong></td><td><span class="status-badge st-fixed">Sharp improvement</span></td></tr>
+          <tr><td><strong>G</strong></td><td>88</td><td>91</td><td>52</td><td>55</td><td><strong>71.5</strong></td><td><span class="status-badge st-risk">Sharp decline</span></td></tr>
+          <tr><td><strong>H</strong></td><td>72</td><td>73</td><td>75</td><td>77</td><td><strong>74.3</strong></td><td><span class="status-badge st-info">Stable / Mid</span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-value">75.1</div><div class="stat-label">Class Avg</div></div>
+        <div class="stat-card"><div class="stat-value">93.5</div><div class="stat-label">Highest Avg (C)</div></div>
+        <div class="stat-card"><div class="stat-value">53.5</div><div class="stat-label">Lowest Avg (D)</div></div>
+        <div class="stat-card"><div class="stat-value">2</div><div class="stat-label">At-Risk Students</div></div>
+        <div class="stat-card"><div class="stat-value">3</div><div class="stat-label">Improving</div></div>
+      </div>
+    </section>
+
+    <section id="t3a-analysis">
+      <h2><span class="num">#3</span> AI-Assisted Analysis</h2>
+      <p class="section-desc">Patterns extracted via Claude, with teacher-side validation. The AI handled arithmetic and grouping; the educator added the interpretive layer.</p>
+
+      <div class="report-block">
+        <h3>Three Patterns</h3>
+        <div class="prose">
+          <p><strong>Pattern 1 &mdash; Polarized class.</strong> The class splits cleanly into a high-performing cluster (A, C, E with averages above 82) and a struggling cluster (D at 53.5). The middle band (B, F, G, H) is the most volatile and most worth investigating.</p>
+          <p><strong>Pattern 2 &mdash; Late-quiz divergence.</strong> Quizzes 3 and 4 reveal trajectory shifts that Quizzes 1 and 2 hide. Students F and B improved sharply on the last two quizzes; Student G collapsed; Student D's downward slope steepened. <em>Looking only at the average masks all of this.</em></p>
+          <p><strong>Pattern 3 &mdash; Two distinct interventions needed.</strong> Student D needs sustained academic support (consistently low across all four quizzes). Student G's pattern looks behavioural or situational rather than academic &mdash; the drop from 91 to 52 between Q2 and Q3 suggests a non-content reason worth a one-on-one conversation.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="t3a-chart">
+      <h2><span class="num">#4</span> Visualization</h2>
+      <p class="section-desc">Class Performance Across Four Quizzes &mdash; grouped bar chart, AUB palette.</p>
+
+      <div class="chart-container">
+        <h4>Class Quiz Performance &mdash; All Students Across 4 Quizzes</h4>
+        <div class="bar-chart">
+          <div class="bar-group"><div class="bar-stack"><div class="bar q1" style="height: 213px;" title="Q1: 85"></div><div class="bar q2" style="height: 220px;" title="Q2: 88"></div><div class="bar q3" style="height: 225px;" title="Q3: 90"></div><div class="bar q4" style="height: 218px;" title="Q4: 87"></div></div><div class="bar-label">A</div></div>
+          <div class="bar-group"><div class="bar-stack"><div class="bar q1" style="height: 150px;" title="Q1: 60"></div><div class="bar q2" style="height: 163px;" title="Q2: 65"></div><div class="bar q3" style="height: 175px;" title="Q3: 70"></div><div class="bar q4" style="height: 223px;" title="Q4: 89"></div></div><div class="bar-label">B</div></div>
+          <div class="bar-group"><div class="bar-stack"><div class="bar q1" style="height: 230px;" title="Q1: 92"></div><div class="bar q2" style="height: 235px;" title="Q2: 94"></div><div class="bar q3" style="height: 238px;" title="Q3: 95"></div><div class="bar q4" style="height: 233px;" title="Q4: 93"></div></div><div class="bar-label">C</div></div>
+          <div class="bar-group"><div class="bar-stack"><div class="bar q1" style="height: 138px;" title="Q1: 55"></div><div class="bar q2" style="height: 133px;" title="Q2: 53"></div><div class="bar q3" style="height: 150px;" title="Q3: 60"></div><div class="bar q4" style="height: 115px;" title="Q4: 46"></div></div><div class="bar-label">D</div></div>
+          <div class="bar-group"><div class="bar-stack"><div class="bar q1" style="height: 195px;" title="Q1: 78"></div><div class="bar q2" style="height: 200px;" title="Q2: 80"></div><div class="bar q3" style="height: 213px;" title="Q3: 85"></div><div class="bar q4" style="height: 220px;" title="Q4: 88"></div></div><div class="bar-label">E</div></div>
+          <div class="bar-group"><div class="bar-stack"><div class="bar q1" style="height: 175px;" title="Q1: 70"></div><div class="bar q2" style="height: 180px;" title="Q2: 72"></div><div class="bar q3" style="height: 228px;" title="Q3: 91"></div><div class="bar q4" style="height: 233px;" title="Q4: 93"></div></div><div class="bar-label">F</div></div>
+          <div class="bar-group"><div class="bar-stack"><div class="bar q1" style="height: 220px;" title="Q1: 88"></div><div class="bar q2" style="height: 228px;" title="Q2: 91"></div><div class="bar q3" style="height: 130px;" title="Q3: 52"></div><div class="bar q4" style="height: 138px;" title="Q4: 55"></div></div><div class="bar-label">G</div></div>
+          <div class="bar-group"><div class="bar-stack"><div class="bar q1" style="height: 180px;" title="Q1: 72"></div><div class="bar q2" style="height: 183px;" title="Q2: 73"></div><div class="bar q3" style="height: 188px;" title="Q3: 75"></div><div class="bar q4" style="height: 193px;" title="Q4: 77"></div></div><div class="bar-label">H</div></div>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item"><span class="legend-swatch" style="background: #7A003C;"></span>Quiz 1</div>
+          <div class="legend-item"><span class="legend-swatch" style="background: #3B6B47;"></span>Quiz 2</div>
+          <div class="legend-item"><span class="legend-swatch" style="background: #C8A951;"></span>Quiz 3</div>
+          <div class="legend-item"><span class="legend-swatch" style="background: #C8853B;"></span>Quiz 4</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="t3a-report">
+      <h2><span class="num">#5</span> Teacher Report</h2>
+      <p class="section-desc">Final brief addressed to the Head of the Educational Unit &mdash; the deliverable submitted with this assignment.</p>
+
+      <div class="report-block">
+        <h3>To: Head of the Educational Unit</h3>
+        <div class="prose">
+          <p><strong>Subject:</strong> Class Performance Brief &mdash; Quizzes 1&ndash;4</p>
+          <p><strong>Class average across the four quizzes is 75.1.</strong> The cohort is healthy at the top (Students A, C, E performing consistently above 82) but I want to flag two students who require different kinds of attention.</p>
+          <p><strong>Student D</strong> has averaged 53.5 with a downward slope (55, 53, 60, 46). This is a sustained academic gap, not a single bad quiz, and I'd like to schedule remediation sessions and a parent meeting.</p>
+          <p><strong>Student G</strong> showed a sharp drop from 91 (Q2) to 52 (Q3), with no recovery in Q4 (55). The pattern is too abrupt to be a content gap &mdash; I suspect a personal or behavioural change between weeks 2 and 3 and would like to meet with them privately first.</p>
+          <p>On the positive side, <strong>Students B and F</strong> showed strong upward trajectories on the later quizzes (B: 60&rarr;89, F: 70&rarr;93). Whatever changed for them &mdash; new study group, intervention, motivation &mdash; is worth understanding so we can replicate it.</p>
+          <p><strong>Recommendation:</strong> Adopt a brief mid-term check-in (10-min one-on-ones) for any student showing a 15+ point swing between consecutive quizzes. The averages alone hid both Student G's collapse and Student F's improvement.</p>
+          <p style="font-size: 0.85rem; color: var(--aub-mist); margin-top: 1.5rem;"><em>Prepared with AI-assisted analysis (Claude). Final interpretation, recommendations, and student-specific judgments are my own.</em></p>
+        </div>
+      </div>
+
+      <div class="report-block">
+        <h3>AI Prompt Used</h3>
+        <p>The following prompt was provided to Claude to assist in the analysis:</p>
+        <div class="prompt-box">You are helping a high school teacher analyze a class of 8 students across 4 equally-weighted quizzes. Here is the data:
+
+Student | Q1 | Q2 | Q3 | Q4
+A | 85 | 88 | 90 | 87
+B | 60 | 65 | 70 | 89
+C | 92 | 94 | 95 | 93
+D | 55 | 53 | 60 | 46
+E | 78 | 80 | 85 | 88
+F | 70 | 72 | 91 | 93
+G | 88 | 91 | 52 | 55
+H | 72 | 73 | 75 | 77
+
+Please:
+1. Compute the class average per quiz and per student.
+2. Identify students whose trajectory across the 4 quizzes is improving, declining, or stable.
+3. Flag any unusual patterns (sharp drops, sharp rises) and suggest plausible explanations.
+4. Suggest one concrete recommendation a teacher could act on.
+
+Keep the response under 300 words. Do not invent any data.</div>
+      </div>
+    </section>
+
+    <section id="t3a-reflection">
+      <h2><span class="num">#6</span> Reflection</h2>
+      <p class="section-desc">Short post-mortem addressing the three required reflection questions.</p>
+
+      <div class="report-block">
+        <h3>What did the AI do well?</h3>
+        <div class="prose">
+          <p>The AI handled the <strong>arithmetic and grouping</strong> reliably &mdash; per-quiz averages, per-student averages, and trajectory categorization were correct on the first pass. It also surfaced the <em>polarization</em> in the cohort and the late-quiz divergence pattern faster than I would have spotted manually. The structured prompt made the output easy to copy-paste into the brief with light editing.</p>
+        </div>
+      </div>
+
+      <div class="report-block">
+        <h3>What did the AI miss, and what did I modify?</h3>
+        <div class="prose">
+          <p>Two things. First, the AI's initial recommendations were generic ("offer extra tutoring", "differentiate instruction") and didn't separate <strong>academic gaps</strong> from <strong>behavioural or situational ones</strong>. Student D and Student G have very different problems and need different responses &mdash; I had to add that distinction myself.</p>
+          <p>Second, the AI treated all averages equally and didn't weight <em>recency</em>. For a teacher writing a brief mid-semester, the last two quizzes matter more than the first two as a signal of where a student is heading. I rewrote the recommendation to focus on <em>quiz-to-quiz swings</em> rather than averages.</p>
+        </div>
+      </div>
+
+      <div class="report-block">
+        <h3>Would I rely on this report as a teacher?</h3>
+        <div class="prose">
+          <p><strong>Not as-is, no.</strong> I would rely on the AI for the descriptive layer &mdash; the numbers, the categorizations, the visual &mdash; but the interpretive and recommendation layer needs a teacher's judgment. The AI cannot know that Student G missed two weeks of class for a family reason, or that Student F joined a peer study group in Week 3. Those are the things that actually explain the data, and they live with the teacher, not the model.</p>
+          <p>The right framing is: <em>AI as a fast first draft, teacher as the final author.</em> This mirrors the lesson from Lecture 1 &mdash; <strong>confidence does not equal correctness</strong>, and educators remain responsible for accuracy and judgment.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+
+<!-- ================================================================ -->
+<!-- TOPICS 4 - 15 placeholders -->
+<!-- ================================================================ -->
+
+<div class="topic-panel" data-topic-panel="4">
+  <div class="sub-tabs"><button class="sub-tab active" data-subtab="t4-overview">Overview</button></div>
+  <div class="sub-panel active" data-subpanel="t4-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 04</span> &mdash; Coming Soon</h2>
+      <p class="topic-overview-desc">Folder is provisioned in the AUB LMS. Content will populate as the course progresses.</p>
+    </div>
+    <div class="coming-soon"><div class="coming-soon-icon">04</div><h3>Coming Soon</h3><p>Topic 04 materials will be added by the instructor on AUB LMS.</p></div>
+  </div>
+</div>
+
+<div class="topic-panel" data-topic-panel="5">
+  <div class="sub-tabs"><button class="sub-tab active" data-subtab="t5-overview">Overview</button></div>
+  <div class="sub-panel active" data-subpanel="t5-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 05</span> &mdash; Coming Soon</h2>
+      <p class="topic-overview-desc">Folder is provisioned in the AUB LMS.</p>
+    </div>
+    <div class="coming-soon"><div class="coming-soon-icon">05</div><h3>Coming Soon</h3><p>Topic 05 materials will be added by the instructor.</p></div>
+  </div>
+</div>
+
+<div class="topic-panel" data-topic-panel="6">
+  <div class="sub-tabs"><button class="sub-tab active" data-subtab="t6-overview">Overview</button></div>
+  <div class="sub-panel active" data-subpanel="t6-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 06</span> &mdash; Coming Soon</h2>
+      <p class="topic-overview-desc">Folder is provisioned in the AUB LMS.</p>
+    </div>
+    <div class="coming-soon"><div class="coming-soon-icon">06</div><h3>Coming Soon</h3><p>Topic 06 materials will be added by the instructor.</p></div>
+  </div>
+</div>
+
+<div class="topic-panel" data-topic-panel="7">
+  <div class="sub-tabs"><button class="sub-tab active" data-subtab="t7-overview">Overview</button></div>
+  <div class="sub-panel active" data-subpanel="t7-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 07</span> &mdash; Coming Soon</h2>
+      <p class="topic-overview-desc">Folder is provisioned in the AUB LMS.</p>
+    </div>
+    <div class="coming-soon"><div class="coming-soon-icon">07</div><h3>Coming Soon</h3><p>Topic 07 materials will be added by the instructor.</p></div>
+  </div>
+</div>
+
+<div class="topic-panel" data-topic-panel="8">
+  <div class="sub-tabs"><button class="sub-tab active" data-subtab="t8-overview">Overview</button></div>
+  <div class="sub-panel active" data-subpanel="t8-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 08</span> &mdash; Coming Soon</h2>
+      <p class="topic-overview-desc">Folder is provisioned in the AUB LMS.</p>
+    </div>
+    <div class="coming-soon"><div class="coming-soon-icon">08</div><h3>Coming Soon</h3><p>Topic 08 materials will be added by the instructor.</p></div>
+  </div>
+</div>
+
+<div class="topic-panel" data-topic-panel="9">
+  <div class="sub-tabs"><button class="sub-tab active" data-subtab="t9-overview">Overview</button></div>
+  <div class="sub-panel active" data-subpanel="t9-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 09</span> &mdash; Coming Soon</h2>
+      <p class="topic-overview-desc">Folder is provisioned in the AUB LMS.</p>
+    </div>
+    <div class="coming-soon"><div class="coming-soon-icon">09</div><h3>Coming Soon</h3><p>Topic 09 materials will be added by the instructor.</p></div>
+  </div>
+</div>
+
+<div class="topic-panel" data-topic-panel="10">
+  <div class="sub-tabs"><button class="sub-tab active" data-subtab="t10-overview">Overview</button></div>
+  <div class="sub-panel active" data-subpanel="t10-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 10</span> &mdash; Coming Soon</h2>
+      <p class="topic-overview-desc">Folder is provisioned in the AUB LMS.</p>
+    </div>
+    <div class="coming-soon"><div class="coming-soon-icon">10</div><h3>Coming Soon</h3><p>Topic 10 materials will be added by the instructor.</p></div>
+  </div>
+</div>
+
+<div class="topic-panel" data-topic-panel="11">
+  <div class="sub-tabs"><button class="sub-tab active" data-subtab="t11-overview">Overview</button></div>
+  <div class="sub-panel active" data-subpanel="t11-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 11</span> &mdash; Coming Soon</h2>
+      <p class="topic-overview-desc">Folder is provisioned in the AUB LMS.</p>
+    </div>
+    <div class="coming-soon"><div class="coming-soon-icon">11</div><h3>Coming Soon</h3><p>Topic 11 materials will be added by the instructor.</p></div>
+  </div>
+</div>
+
+<div class="topic-panel" data-topic-panel="12">
+  <div class="sub-tabs"><button class="sub-tab active" data-subtab="t12-overview">Overview</button></div>
+  <div class="sub-panel active" data-subpanel="t12-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 12</span> &mdash; Coming Soon</h2>
+      <p class="topic-overview-desc">Folder is provisioned in the AUB LMS.</p>
+    </div>
+    <div class="coming-soon"><div class="coming-soon-icon">12</div><h3>Coming Soon</h3><p>Topic 12 materials will be added by the instructor.</p></div>
+  </div>
+</div>
+
+<div class="topic-panel" data-topic-panel="13">
+  <div class="sub-tabs"><button class="sub-tab active" data-subtab="t13-overview">Overview</button></div>
+  <div class="sub-panel active" data-subpanel="t13-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 13</span> &mdash; Coming Soon</h2>
+      <p class="topic-overview-desc">Folder is provisioned in the AUB LMS.</p>
+    </div>
+    <div class="coming-soon"><div class="coming-soon-icon">13</div><h3>Coming Soon</h3><p>Topic 13 materials will be added by the instructor.</p></div>
+  </div>
+</div>
+
+<div class="topic-panel" data-topic-panel="14">
+  <div class="sub-tabs"><button class="sub-tab active" data-subtab="t14-overview">Overview</button></div>
+  <div class="sub-panel active" data-subpanel="t14-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 14</span> &mdash; Coming Soon</h2>
+      <p class="topic-overview-desc">Folder is provisioned in the AUB LMS.</p>
+    </div>
+    <div class="coming-soon"><div class="coming-soon-icon">14</div><h3>Coming Soon</h3><p>Topic 14 materials will be added by the instructor.</p></div>
+  </div>
+</div>
+
+<div class="topic-panel" data-topic-panel="15">
+  <div class="sub-tabs"><button class="sub-tab active" data-subtab="t15-overview">Overview</button></div>
+  <div class="sub-panel active" data-subpanel="t15-overview">
+    <div class="topic-overview-container">
+      <h2><span class="num">Topic 15</span> &mdash; Coming Soon</h2>
+      <p class="topic-overview-desc">Folder is provisioned in the AUB LMS.</p>
+    </div>
+    <div class="coming-soon"><div class="coming-soon-icon">15</div><h3>Coming Soon</h3><p>Topic 15 materials will be added by the instructor.</p></div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <p class="seal">"That they may have life, and have it more abundantly"</p>
+  <p>AI in Education: Literacy &amp; Applications &middot; American University of Beirut &middot; Course #32480</p>
+  <p>Maintained by Mohammad Alrashed &middot; <a href="https://lms.aub.edu.lb/course/view.php?id=32480">AUB LMS</a></p>
+</footer>
+
+<script>
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  themeVariables: {
+    primaryColor: '#2A2826',
+    primaryTextColor: '#F4EFE6',
+    primaryBorderColor: '#7A003C',
+    lineColor: '#C8A951',
+    secondaryColor: '#5C002D',
+    tertiaryColor: '#1C1A19',
+    fontFamily: 'Inter, sans-serif'
+  },
+  flowchart: { htmlLabels: true, curve: 'basis' }
+});
+
+(function() {
+  var topicTabs = document.querySelectorAll('.topic-tab');
+  var topicPanels = document.querySelectorAll('.topic-panel');
+  var mermaidRendered = {};
+
+  function renderMermaid(panelEl, key) {
+    if (mermaidRendered[key]) return;
+    var nodes = panelEl.querySelectorAll('.mermaid');
+    if (!nodes.length) { mermaidRendered[key] = true; return; }
+    nodes.forEach(function(el) {
+      if (el.getAttribute('data-processed')) el.removeAttribute('data-processed');
+      if (el.dataset.original) el.innerHTML = el.dataset.original;
+    });
+    mermaid.run({ nodes: nodes }).then(function() {
+      mermaidRendered[key] = true;
+    }).catch(function(err) { console.warn('Mermaid render error:', err); });
+  }
+
+  // Store original mermaid source so we can re-render after tab switches
+  document.querySelectorAll('.mermaid').forEach(function(el) {
+    el.dataset.original = el.innerHTML;
+  });
+
+  topicTabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var topic = this.getAttribute('data-topic');
+      topicTabs.forEach(function(t) { t.classList.remove('active'); });
+      this.classList.add('active');
+      topicPanels.forEach(function(p) { p.classList.remove('active'); });
+      var target = document.querySelector('[data-topic-panel="' + topic + '"]');
+      if (target) {
+        target.classList.add('active');
+        var subTabs = target.querySelectorAll('.sub-tab');
+        var subPanels = target.querySelectorAll('.sub-panel');
+        subTabs.forEach(function(st, i) { st.classList.toggle('active', i === 0); });
+        subPanels.forEach(function(sp, i) { sp.classList.toggle('active', i === 0); });
+        // Re-render any mermaid in the active sub-panel
+        var activeSub = target.querySelector('.sub-panel.active');
+        if (activeSub) {
+          var key = 'topic' + topic + '-' + (activeSub.getAttribute('data-subpanel') || '0');
+          setTimeout(function() { renderMermaid(activeSub, key); }, 100);
+        }
+      }
+    });
+  });
+
+  // Sub-tab delegation
+  document.addEventListener('click', function(e) {
+    if (!e.target.classList.contains('sub-tab')) return;
+    var subtabId = e.target.getAttribute('data-subtab');
+    var panel = e.target.closest('.topic-panel');
+    if (!panel) return;
+    panel.querySelectorAll('.sub-tab').forEach(function(st) { st.classList.remove('active'); });
+    e.target.classList.add('active');
+    panel.querySelectorAll('.sub-panel').forEach(function(sp) { sp.classList.remove('active'); });
+    var target = panel.querySelector('[data-subpanel="' + subtabId + '"]');
+    if (target) {
+      target.classList.add('active');
+      var key = subtabId;
+      setTimeout(function() { renderMermaid(target, key); }, 100);
+    }
+  });
+
+  // Initial render for the default-active sub-panel (Topic 1 overview has no diagram, but be safe)
+  document.querySelectorAll('.topic-panel.active .sub-panel.active').forEach(function(sp) {
+    var key = sp.getAttribute('data-subpanel') || 'init';
+    setTimeout(function() { renderMermaid(sp, key); }, 200);
+  });
+})();
+</script>
+</body>
+</html>
