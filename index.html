@@ -1189,6 +1189,19 @@ flowchart TB
         <div class="part-card">
           <div class="part-num">Family 1 &mdash; Transformer (Decoder-Only LLM)</div>
           <h3>Stacked self-attention over a token stream</h3>
+          <div style="margin-bottom: 1.2rem; overflow-x: auto;">
+<pre class="mermaid">
+flowchart TD
+    T["Token IDs"]:::input --> E["Embedding + RoPE"]:::block
+    E --> B["Decoder Block &times; N<br/>━━━━━━━━━<br/>RMSNorm<br/>Multi-Head Causal Self-Attn<br/>+ Residual<br/>RMSNorm<br/>SwiGLU FFN<br/>+ Residual"]:::block
+    B --> H["LM Head<br/>(linear + softmax)"]:::block
+    H --> P["Next-token<br/>distribution"]:::output
+    P -.->|"sample &rarr; append"| T
+    classDef input fill:#7A003C,stroke:#C8A951,color:#F4EFE6,font-weight:bold
+    classDef block fill:#5C002D,stroke:#C8A951,color:#F4EFE6
+    classDef output fill:#3B6B47,stroke:#C8A951,color:#F4EFE6
+</pre>
+          </div>
           <ul>
             <li><strong>Core mechanism:</strong> N identical decoder blocks. Each block = multi-head causal self-attention + position-wise feed-forward MLP, both wrapped in residual connections and layer norm (pre-norm in modern variants).</li>
             <li><strong>Attention math:</strong> Attention(Q,K,V) = softmax(QK&#x1D40;/&radic;d<sub>k</sub>) V, with a causal mask so token <em>t</em> only sees tokens &le; <em>t</em>.</li>
@@ -1206,6 +1219,27 @@ flowchart TB
         <div class="part-card">
           <div class="part-num">Family 2 &mdash; Diffusion Model</div>
           <h3>Iterative denoising of Gaussian noise into a sample</h3>
+          <div style="margin-bottom: 1.2rem; overflow-x: auto;">
+<pre class="mermaid">
+flowchart TD
+    subgraph FW["Forward process (training)"]
+      direction LR
+      X0["x&#8320;<br/>real image"]:::input -->|"+ noise"| X1["x&#8321;"]:::block
+      X1 -->|"+ noise"| Xt["x&#8348;"]:::block
+      Xt -->|"+ noise"| XT["x&#7488;<br/>&asymp; N(0,I)"]:::block
+    end
+    subgraph RV["Reverse process (sampling)"]
+      direction LR
+      Z["z &sim; N(0,I)"]:::input -->|"&epsilon;&theta; denoise"| RXt["x&#8348;"]:::block
+      RXt -->|"&epsilon;&theta; denoise"| RX1["x&#8321;"]:::block
+      RX1 -->|"&epsilon;&theta; denoise"| Out["x&#770;&#8320;<br/>generated"]:::output
+    end
+    Cond["text prompt<br/>(CLIP / T5)"]:::input -.->|"classifier-free<br/>guidance"| RXt
+    classDef input fill:#7A003C,stroke:#C8A951,color:#F4EFE6,font-weight:bold
+    classDef block fill:#5C002D,stroke:#C8A951,color:#F4EFE6
+    classDef output fill:#3B6B47,stroke:#C8A951,color:#F4EFE6
+</pre>
+          </div>
           <ul>
             <li><strong>Core mechanism:</strong> A forward process gradually corrupts data x&#x2080; into pure noise x&#x209C; over <em>T</em> steps; a neural network learns the <em>reverse</em> process, predicting and removing the noise step-by-step.</li>
             <li><strong>Forward (noising):</strong> q(x&#x209C; | x&#x2080;) = N(x&#x209C;; &radic;&#x0101;&#x209C; &middot; x&#x2080;, (1&minus;&#x0101;&#x209C;) I) &mdash; closed-form Gaussian noise schedule (linear, cosine).</li>
@@ -1223,6 +1257,21 @@ flowchart TB
         <div class="part-card">
           <div class="part-num">Family 3 &mdash; GAN (Adversarial)</div>
           <h3>Two networks playing a minimax game</h3>
+          <div style="margin-bottom: 1.2rem; overflow-x: auto;">
+<pre class="mermaid">
+flowchart LR
+    Z["z &sim; N(0,I)"]:::input --> G["Generator G"]:::block
+    G --> Fake["Fake sample<br/>x' = G(z)"]:::block
+    Real["Real sample x<br/>(dataset)"]:::input --> D["Discriminator D"]:::block
+    Fake --> D
+    D --> S["Real / Fake<br/>probability"]:::output
+    S -.->|"&nabla; update G<br/>(fool D)"| G
+    S -.->|"&nabla; update D<br/>(catch G)"| D
+    classDef input fill:#7A003C,stroke:#C8A951,color:#F4EFE6,font-weight:bold
+    classDef block fill:#5C002D,stroke:#C8A951,color:#F4EFE6
+    classDef output fill:#3B6B47,stroke:#C8A951,color:#F4EFE6
+</pre>
+          </div>
           <ul>
             <li><strong>Core mechanism:</strong> Generator G(z) maps noise z &sim; N(0,I) to a candidate sample; Discriminator D(x) scores the probability that x is real. The two are trained <em>against</em> each other.</li>
             <li><strong>Training objective:</strong> min<sub>G</sub> max<sub>D</sub> E<sub>x&sim;p<sub>data</sub></sub>[log D(x)] + E<sub>z&sim;p<sub>z</sub></sub>[log(1 &minus; D(G(z)))]. WGAN-GP variants replace this with Wasserstein distance + gradient penalty for stability.</li>
@@ -1238,6 +1287,22 @@ flowchart TB
         <div class="part-card">
           <div class="part-num">Family 4 &mdash; VAE (Variational Autoencoder)</div>
           <h3>Probabilistic encoder &rarr; latent space &rarr; decoder</h3>
+          <div style="margin-bottom: 1.2rem; overflow-x: auto;">
+<pre class="mermaid">
+flowchart LR
+    X["input x"]:::input --> Enc["Encoder<br/>q&phi;(z|x)"]:::block
+    Enc --> Mu["&mu;"]:::block
+    Enc --> Sg["&sigma;"]:::block
+    Eps["&epsilon; &sim; N(0,I)"]:::input -.-> R
+    Mu --> R["z = &mu; + &sigma; &middot; &epsilon;<br/>(reparam trick)"]:::block
+    Sg --> R
+    R --> Dec["Decoder<br/>p&theta;(x|z)"]:::block
+    Dec --> Xh["x&#770;<br/>reconstructed"]:::output
+    classDef input fill:#7A003C,stroke:#C8A951,color:#F4EFE6,font-weight:bold
+    classDef block fill:#5C002D,stroke:#C8A951,color:#F4EFE6
+    classDef output fill:#3B6B47,stroke:#C8A951,color:#F4EFE6
+</pre>
+          </div>
           <ul>
             <li><strong>Core mechanism:</strong> Encoder q<sub>&phi;</sub>(z|x) maps input x to a Gaussian over a low-dim latent z; decoder p<sub>&theta;</sub>(x|z) reconstructs x. The latent prior is regularised to N(0, I) so the space stays smooth and samplable.</li>
             <li><strong>Reparameterisation trick:</strong> Sample z = &mu; + &sigma; &odot; &epsilon;, &epsilon; &sim; N(0,I), so gradients flow through the stochastic node.</li>
@@ -1254,6 +1319,23 @@ flowchart TB
         <div class="part-card">
           <div class="part-num">Family 5 &mdash; Multimodal (Unified Transformer)</div>
           <h3>One model that ingests &amp; emits multiple modalities</h3>
+          <div style="margin-bottom: 1.2rem; overflow-x: auto;">
+<pre class="mermaid">
+flowchart LR
+    Img["image"]:::input --> VE["Vision Encoder<br/>ViT / SigLIP"]:::block
+    Aud["audio"]:::input --> AE["Audio Encoder<br/>Whisper-style"]:::block
+    Txt["text"]:::input --> TE["Tokenizer<br/>(BPE)"]:::block
+    VE --> U["Unified Transformer<br/>(shared token space)<br/>cross-attention<br/>or early fusion"]:::block
+    AE --> U
+    TE --> U
+    U --> OutT["text out"]:::output
+    U --> OutI["image out"]:::output
+    U --> OutA["audio out"]:::output
+    classDef input fill:#7A003C,stroke:#C8A951,color:#F4EFE6,font-weight:bold
+    classDef block fill:#5C002D,stroke:#C8A951,color:#F4EFE6
+    classDef output fill:#3B6B47,stroke:#C8A951,color:#F4EFE6
+</pre>
+          </div>
           <ul>
             <li><strong>Core mechanism:</strong> Modality-specific encoders project images, audio, and video into the same token space as text; a single Transformer reasons over the unified sequence and decodes back to text (or other modalities).</li>
             <li><strong>Key components:</strong> Vision encoder (ViT / SigLIP / CLIP) that turns an image into ~256&ndash;1024 visual tokens; audio encoder (Whisper-style); shared LLM backbone with cross-attention or early-fusion of modality tokens; sometimes a Mixture-of-Experts router.</li>
