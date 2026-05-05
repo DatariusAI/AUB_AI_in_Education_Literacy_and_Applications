@@ -1181,6 +1181,153 @@ flowchart TB
         </div>
       </div>
 
+      <h2 style="margin-top: 3rem;"><span class="num">Deep Dive</span> &mdash; Per-Family Architecture</h2>
+      <p class="section-desc">A complete technical breakdown of each of the five generative families: the mathematical core, the building blocks, how they're trained, how they're sampled at inference, and the failure modes every educator should recognize before recommending a tool to students.</p>
+
+      <div class="parts-grid">
+
+        <div class="part-card">
+          <div class="part-num">Family 1 &mdash; Transformer (Decoder-Only LLM)</div>
+          <h3>Stacked self-attention over a token stream</h3>
+          <ul>
+            <li><strong>Core mechanism:</strong> N identical decoder blocks. Each block = multi-head causal self-attention + position-wise feed-forward MLP, both wrapped in residual connections and layer norm (pre-norm in modern variants).</li>
+            <li><strong>Attention math:</strong> Attention(Q,K,V) = softmax(QK&#x1D40;/&radic;d<sub>k</sub>) V, with a causal mask so token <em>t</em> only sees tokens &le; <em>t</em>.</li>
+            <li><strong>Key components:</strong> Token embedding, positional encoding (RoPE / ALiBi in modern models), multi-head attention (typ. 32&ndash;128 heads), SwiGLU/GEGLU FFN, RMSNorm, KV cache.</li>
+            <li><strong>Training objective:</strong> Next-token cross-entropy (causal language modelling) over trillions of web tokens, then SFT on instructions, then RLHF/DPO for preference alignment.</li>
+            <li><strong>Inference:</strong> Autoregressive token-by-token sampling (greedy / temperature / top-p / top-k); KV cache reuses past keys-values so each new token is O(n) not O(n&sup2;).</li>
+            <li><strong>Compute footprint:</strong> Pre-training cost scales ~6&middot;N&middot;D FLOPs (Chinchilla) where N = parameters, D = training tokens. Frontier models: 10&sup2;&#x2075;&ndash;10&sup2;&#x2076; FLOPs.</li>
+            <li><strong>Strengths:</strong> Long-range coherence, in-context learning, instruction-following, zero/few-shot generalisation, parallelisable training.</li>
+            <li><strong>Limitations:</strong> O(n&sup2;) attention memory, hallucination, no native symbolic reasoning, brittle on long-horizon planning, knowledge cut-off.</li>
+            <li><strong>Notable models:</strong> GPT-4 / 4o, Claude 3.5 Sonnet, Gemini 1.5 Pro, Llama 3.1 (8B&ndash;405B), Mistral, Qwen 2.5.</li>
+            <li><strong>Education use:</strong> Lesson plans, rubrics, Socratic Q&amp;A, code explanations, feedback drafts &mdash; anything text-shaped.</li>
+          </ul>
+        </div>
+
+        <div class="part-card">
+          <div class="part-num">Family 2 &mdash; Diffusion Model</div>
+          <h3>Iterative denoising of Gaussian noise into a sample</h3>
+          <ul>
+            <li><strong>Core mechanism:</strong> A forward process gradually corrupts data x&#x2080; into pure noise x&#x209C; over <em>T</em> steps; a neural network learns the <em>reverse</em> process, predicting and removing the noise step-by-step.</li>
+            <li><strong>Forward (noising):</strong> q(x&#x209C; | x&#x2080;) = N(x&#x209C;; &radic;&#x0101;&#x209C; &middot; x&#x2080;, (1&minus;&#x0101;&#x209C;) I) &mdash; closed-form Gaussian noise schedule (linear, cosine).</li>
+            <li><strong>Reverse (denoising):</strong> A U-Net or Diffusion Transformer (DiT) predicts the noise &epsilon;<sub>&theta;</sub>(x&#x209C;, t, c) added at step <em>t</em>, conditioned on text embedding <em>c</em>.</li>
+            <li><strong>Key components:</strong> Noise scheduler, U-Net / DiT denoiser, text encoder (CLIP, T5-XXL), VAE encoder/decoder for latent diffusion (operates in 64&times;64 latent space, not pixel space), classifier-free guidance.</li>
+            <li><strong>Training objective:</strong> L<sub>simple</sub> = E<sub>t,x&#x2080;,&epsilon;</sub> &#x2016;&epsilon; &minus; &epsilon;<sub>&theta;</sub>(x&#x209C;, t, c)&#x2016;&sup2; &mdash; mean-squared error on the predicted noise (or v-prediction in newer variants).</li>
+            <li><strong>Inference:</strong> Iterate the reverse process for 20&ndash;1000 steps using a sampler (DDPM, DDIM, DPM-Solver, Euler-A); classifier-free guidance scale (CFG, typ. 5&ndash;9) trades diversity for prompt-adherence.</li>
+            <li><strong>Strengths:</strong> State-of-the-art image fidelity, mode coverage (no collapse), strong controllability via ControlNet / LoRA / inpainting.</li>
+            <li><strong>Limitations:</strong> Slow sampling (vs. one-shot GAN), poor text-in-image rendering (until SD3 / FLUX), counting and spatial relationships still weak, expensive training (millions of GPU-hours).</li>
+            <li><strong>Notable models:</strong> Stable Diffusion 3 / FLUX.1, DALL&middot;E 3, Midjourney v6, Imagen 3, Sora (video diffusion transformer).</li>
+            <li><strong>Education use:</strong> Visual aids, infographics, illustrated stories, historical-scene mock-ups, scientific diagrams.</li>
+          </ul>
+        </div>
+
+        <div class="part-card">
+          <div class="part-num">Family 3 &mdash; GAN (Adversarial)</div>
+          <h3>Two networks playing a minimax game</h3>
+          <ul>
+            <li><strong>Core mechanism:</strong> Generator G(z) maps noise z &sim; N(0,I) to a candidate sample; Discriminator D(x) scores the probability that x is real. The two are trained <em>against</em> each other.</li>
+            <li><strong>Training objective:</strong> min<sub>G</sub> max<sub>D</sub> E<sub>x&sim;p<sub>data</sub></sub>[log D(x)] + E<sub>z&sim;p<sub>z</sub></sub>[log(1 &minus; D(G(z)))]. WGAN-GP variants replace this with Wasserstein distance + gradient penalty for stability.</li>
+            <li><strong>Key components:</strong> Generator (transposed-conv or style-based synthesis network), Discriminator (conv classifier), latent code z, optional style code w (StyleGAN), spectral normalisation, R1 regularisation.</li>
+            <li><strong>Inference:</strong> A single forward pass through G &mdash; orders of magnitude faster than diffusion (one step vs. dozens), enabling real-time generation and editing.</li>
+            <li><strong>Strengths:</strong> Sub-millisecond sampling, photorealistic faces (StyleGAN3), excellent for image-to-image translation (Pix2Pix, CycleGAN), strong on bounded domains.</li>
+            <li><strong>Limitations:</strong> Notorious training instability, mode collapse (G produces a narrow slice of the distribution), no exact likelihood, surpassed by diffusion for general open-domain text-to-image.</li>
+            <li><strong>Notable models:</strong> StyleGAN3, BigGAN, Pix2Pix, CycleGAN, GigaGAN; widely used in face-swap / deepfake pipelines.</li>
+            <li><strong>Education use:</strong> Limited as a primary tool; high value in <em>media-literacy lessons</em> &mdash; demonstrate deepfakes responsibly so students can spot synthetic faces.</li>
+          </ul>
+        </div>
+
+        <div class="part-card">
+          <div class="part-num">Family 4 &mdash; VAE (Variational Autoencoder)</div>
+          <h3>Probabilistic encoder &rarr; latent space &rarr; decoder</h3>
+          <ul>
+            <li><strong>Core mechanism:</strong> Encoder q<sub>&phi;</sub>(z|x) maps input x to a Gaussian over a low-dim latent z; decoder p<sub>&theta;</sub>(x|z) reconstructs x. The latent prior is regularised to N(0, I) so the space stays smooth and samplable.</li>
+            <li><strong>Reparameterisation trick:</strong> Sample z = &mu; + &sigma; &odot; &epsilon;, &epsilon; &sim; N(0,I), so gradients flow through the stochastic node.</li>
+            <li><strong>Training objective (ELBO):</strong> L = E<sub>q(z|x)</sub>[log p(x|z)] &minus; &beta; &middot; KL(q(z|x) &#x2016; p(z)). The first term is reconstruction; the second pulls the posterior toward the prior. &beta;-VAE tunes &beta; for disentangled latents.</li>
+            <li><strong>Key components:</strong> Encoder net, decoder net, latent bottleneck, KL regulariser, optional vector-quantised codebook (VQ-VAE).</li>
+            <li><strong>Inference:</strong> Sample z &sim; N(0, I) &rarr; decode for novel generation; or encode x &rarr; perturb z &rarr; decode for controlled editing and interpolation.</li>
+            <li><strong>Strengths:</strong> Principled probabilistic framework, smooth interpolatable latent space, fast single-pass inference, exact likelihood (lower bound), foundational for representation learning.</li>
+            <li><strong>Limitations:</strong> Reconstructions blurrier than GAN/diffusion outputs, posterior collapse (decoder ignores z), weaker as a stand-alone generator on complex images.</li>
+            <li><strong>Notable models:</strong> &beta;-VAE, VQ-VAE / VQ-VAE-2, NVAE; the <em>VAE inside Stable Diffusion</em> compresses 512&times;512 pixel images to a 64&times;64 latent &mdash; without it, modern image diffusion would be infeasible to train.</li>
+            <li><strong>Education use:</strong> Concept demos for representation learning; embedded inside almost every modern diffusion stack students will use.</li>
+          </ul>
+        </div>
+
+        <div class="part-card">
+          <div class="part-num">Family 5 &mdash; Multimodal (Unified Transformer)</div>
+          <h3>One model that ingests &amp; emits multiple modalities</h3>
+          <ul>
+            <li><strong>Core mechanism:</strong> Modality-specific encoders project images, audio, and video into the same token space as text; a single Transformer reasons over the unified sequence and decodes back to text (or other modalities).</li>
+            <li><strong>Key components:</strong> Vision encoder (ViT / SigLIP / CLIP) that turns an image into ~256&ndash;1024 visual tokens; audio encoder (Whisper-style); shared LLM backbone with cross-attention or early-fusion of modality tokens; sometimes a Mixture-of-Experts router.</li>
+            <li><strong>Training objective:</strong> A blend of (1) next-token prediction on interleaved image-text-audio sequences, (2) contrastive image-text alignment (CLIP-style), and (3) instruction tuning + RLHF on multimodal preference data.</li>
+            <li><strong>Inference:</strong> A single model takes any combination of {text, image, audio, video} as input and produces text (and increasingly image/audio) as output &mdash; no pipeline of separate specialist models.</li>
+            <li><strong>Strengths:</strong> Cross-modal grounding (read a chart, interpret a photo, transcribe + reason about audio in one shot), real-world problem-solving, strong accessibility applications.</li>
+            <li><strong>Limitations:</strong> Vision quality still trails dedicated vision systems on fine detail (small text, dense scenes), long-context multimodal is expensive, hallucination on visual content is harder to detect than on text.</li>
+            <li><strong>Notable models:</strong> GPT-4o (omni), Gemini 1.5 / 2.0 Pro, Claude 3.5 Sonnet (vision), Llama 3.2-Vision (11B / 90B), Qwen2-VL.</li>
+            <li><strong>Education use:</strong> Photo-based homework help (snap a problem, get a worked solution), image-to-description for accessibility, lab-photo analysis, real-world word problems.</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <h2 style="margin-top: 3rem;"><span class="num">Compare</span> &mdash; Architectures Side-by-Side</h2>
+      <p class="section-desc">A one-glance reference for choosing or critiquing a tool by the architecture sitting behind it.</p>
+
+      <div style="overflow-x: auto;">
+        <table class="audit-table">
+          <thead>
+            <tr>
+              <th>Family</th>
+              <th>Mathematical core</th>
+              <th>Training objective</th>
+              <th>Sampling cost</th>
+              <th>Output quality</th>
+              <th>Primary failure mode</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Transformer</strong></td>
+              <td>Self-attention over tokens</td>
+              <td>Next-token cross-entropy + RLHF</td>
+              <td>1 forward pass per token</td>
+              <td>State-of-the-art for text &amp; code</td>
+              <td>Hallucination, knowledge cut-off</td>
+            </tr>
+            <tr>
+              <td><strong>Diffusion</strong></td>
+              <td>Score / noise prediction</td>
+              <td>MSE on predicted noise &epsilon;</td>
+              <td>20&ndash;1000 denoising steps</td>
+              <td>State-of-the-art for images / video</td>
+              <td>Slow; weak text-in-image &amp; counting</td>
+            </tr>
+            <tr>
+              <td><strong>GAN</strong></td>
+              <td>Minimax adversarial game</td>
+              <td>min<sub>G</sub> max<sub>D</sub> binary cross-entropy</td>
+              <td>1 forward pass through G</td>
+              <td>Photorealistic on bounded domains</td>
+              <td>Mode collapse, training instability</td>
+            </tr>
+            <tr>
+              <td><strong>VAE</strong></td>
+              <td>Variational inference (ELBO)</td>
+              <td>Reconstruction + &beta;&middot;KL</td>
+              <td>1 encode + 1 decode pass</td>
+              <td>Smooth latents; outputs softer</td>
+              <td>Blurry samples, posterior collapse</td>
+            </tr>
+            <tr>
+              <td><strong>Multimodal</strong></td>
+              <td>Unified Transformer + modality encoders</td>
+              <td>Mixed: NTP + contrastive + RLHF</td>
+              <td>1 forward pass per output token</td>
+              <td>Cross-modal reasoning</td>
+              <td>Visual hallucination harder to spot</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <h2 style="margin-top: 3rem;"><span class="num">#2</span> The Training Pipeline &mdash; Five Stages</h2>
       <p class="section-desc">From Slide 11: how a generative model goes from raw data on the internet to the response you see in a chat window.</p>
 
